@@ -17,7 +17,7 @@ export const registerSchema = joi
     confirmPassword: joi.string().valid(joi.ref("password")).required(),
     dateOfBirth: joi.date().required(),
     gender: joi.string().valid("Male", "Female").required(),
-    phone: joi.string().max(11)
+    phone: joi.string().max(13)
   })
   .required();
 export const activateAccountSchema = joi
@@ -25,7 +25,7 @@ export const activateAccountSchema = joi
     activationCode: joi.string().max(4).required()
   })
   .required();
-export const forgetCodeSchema = joi
+export const forgetCodeEmailSchema = joi
   .object({
     email: joi
       .string()
@@ -39,7 +39,12 @@ export const forgetCodeSchema = joi
       .required()
   })
   .required();
-export const resetPasswordSchema = joi
+export const forgetCodePhoneSchema = joi
+  .object({
+    phone: joi.string().max(13).required()
+  })
+  .required();
+export const resetPasswordEmailSchema = joi
   .object({
     forgetCode: joi.string().max(4).required(),
     email: joi
@@ -59,7 +64,18 @@ export const resetPasswordSchema = joi
     confirmPassword: joi.string().valid(joi.ref("password")).required()
   })
   .required();
-export const reconfirmResetPassSchema = joi
+export const resetPasswordPhoneSchema = joi
+  .object({
+    forgetCode: joi.string().max(4).required(),
+    phone: joi.string().max(13).required(),
+    password: joi
+      .string()
+      .pattern(RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])"))
+      .required(),
+    confirmPassword: joi.string().valid(joi.ref("password")).required()
+  })
+  .required();
+export const reconfirmResetPassEmailSchema = joi
   .object({
     email: joi
       .string()
@@ -73,6 +89,11 @@ export const reconfirmResetPassSchema = joi
       .required()
   })
   .required();
+export const reconfirmResetPassPhoneSchema = joi
+  .object({
+    phone: joi.string().max(13).required()
+  })
+  .required();
 export const loginSchema = joi
   .object({
     email: joi
@@ -83,8 +104,8 @@ export const loginSchema = joi
         tlds: {
           allow: ["com", "net"]
         }
-      })
-      .required(),
+      }),
+      phone:joi.string().max(13),
     password: joi
       .string()
       .pattern(RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])"))

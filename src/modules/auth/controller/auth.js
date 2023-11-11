@@ -12,56 +12,56 @@ import { nanoid } from "nanoid";
 import cloudinary from "../../../utils/cloudinary.js";
 import jwk from "jsonwebtoken";
 import tokenModel from "../../../../DB/models/token.model.js";
+import { sendSMS } from "../../../utils/sendSMS.js";
 export const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, phone, password, dateOfBirth } = req.body;
-  //register with email
   if (email) {
-    // existence
-    const isUser = await userModel.findOne({ email }); //{} , null
-    if (isUser)
-      return next(new Error("Email already registered!", { cause: 408 }));
-    // uploud photo
-    if (!req.file)
-      return next(new Error("personalIdCard is required", { cause: 400 }));
-    const cloudFolder = nanoid();
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-      }
-    );
-    //hash password
-    const hashPasword = bcrypt.hashSync(
-      password,
-      parseInt(process.env.SALT_ROUND)
-    );
-    const code = Randomstring.generate({
-      length: 4,
-      charset: "numeric"
-    });
-    const currentTime = new Date();
-    const uniqueNumber = Randomstring.generate({
-      length: 1,
-      charset: "numeric"
-    });
-    const Alphabetic = Randomstring.generate({
-      length: 1,
-      charset: "alphabetic"
-    });
-    const user = await userModel.create({
-      firstName,
-      lastName,
-      userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
-      email,
-      password: hashPasword,
-      dateOfBirth,
-      activationCode: code,
-      createdCodeActivateAccount: currentTime,
-      personalIdCard: { secure_url, public_id }
-    });
-    // token activate account
+  // existence
+  const isUser = await userModel.findOne({email}); //{} , null
+  if (isUser)
+    return next(new Error("email already registered!", { cause: 408 }));
+  // uploud photo
+  if (!req.file)
+    return next(new Error("personalIdCard is required", { cause: 400 }));
+  const cloudFolder = nanoid();
+  const { secure_url, public_id } = await cloudinary.uploader.upload(
+    req.file.path,
+    {
+      folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+    }
+  );
+  //hash password
+  const hashPasword = bcrypt.hashSync(
+    password,
+    parseInt(process.env.SALT_ROUND)
+  );
+  const code = Randomstring.generate({
+    length: 4,
+    charset: "numeric"
+  });
+  const currentTime = new Date();
+  const uniqueNumber = Randomstring.generate({
+    length: 1,
+    charset: "numeric"
+  });
+  const Alphabetic = Randomstring.generate({
+    length: 1,
+    charset: "alphabetic"
+  });
+  const user = await userModel.create({
+    firstName,
+    lastName,
+    userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
+    email,
+    password: hashPasword,
+    dateOfBirth,
+    activationCode: code,
+    createdCodeActivateAccount: currentTime,
+    personalIdCard: { secure_url, public_id }
+  });
+  // token activate account
     const token = jwk.sign(
-      { id: user._id, userName: user.userName },
+      { id: user._id},
       process.env.EMAIL_SIGNATURE,
       { expiresIn: 60 * 60 * 2 }
     );
@@ -78,6 +78,64 @@ export const register = asyncHandler(async (req, res, next) => {
           token_Activate_Account: token
         })
       : next(new Error("wrong please try agian", { cause: 400 }));
+  }
+  if (phone) {
+   // existence
+  const isUser = await userModel.findOne({phone}); //{} , null
+  if (isUser)
+    return next(new Error("phone already registered!", { cause: 408 }));
+  // uploud photo
+  if (!req.file)
+    return next(new Error("personalIdCard is required", { cause: 400 }));
+  const cloudFolder = nanoid();
+  const { secure_url, public_id } = await cloudinary.uploader.upload(
+    req.file.path,
+    {
+      folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+    }
+  );
+  //hash password
+  const hashPasword = bcrypt.hashSync(
+    password,
+    parseInt(process.env.SALT_ROUND)
+  );
+  const code = Randomstring.generate({
+    length: 4,
+    charset: "numeric"
+  });
+  const currentTime = new Date();
+  const uniqueNumber = Randomstring.generate({
+    length: 1,
+    charset: "numeric"
+  });
+  const Alphabetic = Randomstring.generate({
+    length: 1,
+    charset: "alphabetic"
+  });
+  const user = await userModel.create({
+    firstName,
+    lastName,
+    userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
+    phone,
+    password: hashPasword,
+    dateOfBirth,
+    activationCode: code,
+    createdCodeActivateAccount: currentTime,
+    personalIdCard: { secure_url, public_id }
+  });
+  // token activate account
+    const token = jwk.sign(
+      { id: user._id},
+      process.env.EMAIL_SIGNATURE,
+      { expiresIn: 60 * 60 * 2 }
+    );
+    await sendSMS(phone, `Please activate your account! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!",
+      result: user,
+      token_Activate_Account: token
+    });
   }
 });
 export const activateAccount = asyncHandler(async (req, res, next) => {
@@ -120,10 +178,47 @@ export const ReconfirmAccountActivation = asyncHandler(
     });
     if (!user) return next(new Error("Please create a new account"));
     if (user.isConfirmed) return next(new Error("please go to login"));
+    if(user.email){
+      const isSend = await sendEmail({
+        to: user.email,
+        subject: "Please activate your account!",
+        html: TempConfirmationEmail(user.firstName, code)
+      });
+      return isSend
+        ? res.json({
+            success: true,
+            Message: "check inbox !"
+          })
+        : next(new Error("wrong please try agian", { cause: 400 }));
+    }
+    if(user.phone){
+      await sendSMS(user.phone, `ReconfirmAccountActivation-Please activate your account! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!",
+    });
+    }
+  }
+);
+
+export const sendForgetPasswordCodeEmail = asyncHandler(
+  async (req, res, next) => {
+    const { email } = req.body;
+    const user = await userModel.findOne({ email });
+    if (!user)
+      return next(new Error("This account is not available", { cause: 400 }));
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    user.forgetCode = code;
+    user.createdCodeResetPassword = currentTime;
+    await user.save();
     const isSend = await sendEmail({
       to: user.email,
-      subject: "Please activate your account!",
-      html: TempConfirmationEmail(user.firstName, code)
+      subject: "Reset your password!",
+      html: tempResetPassword(user.firstName, code)
     });
     return isSend
       ? res.json({
@@ -133,34 +228,28 @@ export const ReconfirmAccountActivation = asyncHandler(
       : next(new Error("wrong please try agian", { cause: 400 }));
   }
 );
-
-export const sendForgetPasswordCode = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  const user = await userModel.findOne({ email });
-  if (!user)
-    return next(new Error("This account is not available", { cause: 400 }));
-  const code = Randomstring.generate({
-    length: 4,
-    charset: "numeric"
-  });
-  const currentTime = new Date();
-  user.forgetCode = code;
-  user.createdCodeResetPassword = currentTime;
-  await user.save();
-  const isSend = await sendEmail({
-    to: user.email,
-    subject: "Reset your password!",
-    html: tempResetPassword(user.firstName, code)
-  });
-  return isSend
-    ? res.json({
-        success: true,
-        Message: "check inbox !"
-      })
-    : next(new Error("wrong please try agian", { cause: 400 }));
-});
-
-export const resetPassword = asyncHandler(async (req, res, next) => {
+export const sendForgetPasswordCodePhone = asyncHandler(
+  async (req, res, next) => {
+    const { phone } = req.body;
+    const user = await userModel.findOne({ phone });
+    if (!user)
+      return next(new Error("This account is not available", { cause: 400 }));
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    user.forgetCode = code;
+    user.createdCodeResetPassword = currentTime;
+    await user.save();
+    await sendSMS(phone, `Reset your password code! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!"
+    });
+  }
+);
+export const resetPasswordEmail = asyncHandler(async (req, res, next) => {
   const { forgetCode, email, password } = req.body;
   const currentTime = new Date();
   const validityDuration = 5 * 60 * 1000;
@@ -195,35 +284,96 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
-export const ReconfirmResetPassword = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  const code = Randomstring.generate({
-    length: 4,
-    charset: "numeric"
-  });
+export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
+  const { forgetCode, phone, password } = req.body;
   const currentTime = new Date();
-  const user = await userModel.findOneAndUpdate(
-    { email },
-    {
-      forgetCode: code,
-      createdCodeResetPassword: currentTime
+  const validityDuration = 5 * 60 * 1000;
+  const isUser = await userModel.findOne({ phone });
+  if (!isUser) return next(new Error("user not found", { cause: 404 }));
+  const codeDocument = await userModel.findOne({ forgetCode });
+  if (codeDocument) {
+    const codeCreationTime = codeDocument.createdCodeResetPassword;
+    const timeDifference = currentTime - codeCreationTime;
+    if (timeDifference <= validityDuration) {
+      await userModel.findOneAndUpdate(
+        { phone },
+        {
+          $unset: { forgetCode: 1 }
+        }
+      );
+      codeDocument.password = bcrypt.hashSync(
+        password,
+        parseInt(process.env.SALT_ROUND)
+      );
+      await codeDocument.save();
+      const tokens = await tokenModel.find({ user: codeDocument._id });
+      tokens.forEach(async token => {
+        token.isValid = false;
+        await token.save();
+      });
+      return res.json({ success: true, Message: "Done" });
+    } else {
+      return next(new Error("Expiry verification code", { cause: 400 }));
     }
-  );
-  if (!user) return next(new Error("user not found", { cause: 404 }));
-  const isSend = await sendEmail({
-    to: user.email,
-    subject: "Reset your password!",
-    html: tempResetPassword(user.firstName, code)
-  });
-  return isSend
-    ? res.json({
-        success: true,
-        Message: "check inbox !"
-      })
-    : next(new Error("wrong please try agian", { cause: 400 }));
+  } else {
+    return next(new Error("The verification code is In-valid", { cause: 400 }));
+  }
 });
+export const ReconfirmResetPasswordEmail = asyncHandler(
+  async (req, res, next) => {
+    const { email } = req.body;
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    const user = await userModel.findOneAndUpdate(
+      { email },
+      {
+        forgetCode: code,
+        createdCodeResetPassword: currentTime
+      }
+    );
+    if (!user) return next(new Error("user not found", { cause: 404 }));
+    const isSend = await sendEmail({
+      to: user.email,
+      subject: "Reset your password!",
+      html: tempResetPassword(user.firstName, code)
+    });
+    return isSend
+      ? res.json({
+          success: true,
+          Message: "check inbox !"
+        })
+      : next(new Error("wrong please try agian", { cause: 400 }));
+  }
+);
+export const ReconfirmResetPasswordPhone = asyncHandler(
+  async (req, res, next) => {
+    const { phone } = req.body;
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    const user = await userModel.findOneAndUpdate(
+      { phone },
+      {
+        forgetCode: code,
+        createdCodeResetPassword: currentTime
+      }
+    );
+    if (!user) return next(new Error("user not found", { cause: 404 }));
+    await sendSMS(phone, `Please activate your account! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!"
+    });
+  }
+);
 export const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email,phone, password } = req.body;
+ if(email){
   const user = await userModel.findOne({ email });
   if (!user)
     return next(new Error("You have not created an account", { cause: 400 }));
@@ -247,8 +397,33 @@ export const login = asyncHandler(async (req, res, next) => {
   return res
     .status(200)
     .json({ success: true, Message: "go to home page", auth: token });
+ } if(phone){
+  const user = await userModel.findOne({ phone });
+  if (!user)
+    return next(new Error("You have not created an account", { cause: 400 }));
+  if (!user.isConfirmed)
+    return next(new Error("unactivated aacount!", { cause: 400 }));
+  const comparePassword = bcrypt.compareSync(password, user.password);
+  if (!comparePassword)
+    return next(new Error("In-valid Email Or Password", { cause: 400 }));
+  const token = jwk.sign(
+    { id: user._id, userName: user.userName },
+    process.env.TOKEN_SIGNATURE,
+    { expiresIn: "2d" }
+  );
+  await tokenModel.create({
+    token,
+    user: user._id,
+    agent: req.headers["user-agent"]
+  });
+  user.status = "online";
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, Message: "go to home page", auth: token });
+ }
 });
-export const users = asyncHandler(async(req,res,next)=>{
+export const users = asyncHandler(async (req, res, next) => {
   const user = await userModel.find({});
-  return res.json({success:true,result:user});
-})
+  return res.json({ success: true, result: user });
+});
