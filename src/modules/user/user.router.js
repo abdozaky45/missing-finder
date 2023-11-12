@@ -1,5 +1,6 @@
 import { Router } from "express";
 import *as userController from "./controller/user.js";
 const router = Router();
-router.post("/",userController.test);
+router.get("/",userController.users);
+router.get("/:_id",userController.deleteUser)
 export default router;

@@ -60,4 +60,4 @@ router.patch(
 //Login
 router.post("/login", validation(validator.loginSchema), authController.login);
 export default router;
-router.get("/", authController.users);
+

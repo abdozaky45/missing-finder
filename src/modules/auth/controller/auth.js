@@ -423,7 +423,4 @@ export const login = asyncHandler(async (req, res, next) => {
     .json({ success: true, Message: "go to home page", auth: token });
  }
 });
-export const users = asyncHandler(async (req, res, next) => {
-  const user = await userModel.find({});
-  return res.json({ success: true, result: user });
-});
+
