@@ -16,55 +16,53 @@ import { sendSMS } from "../../../utils/sendSMS.js";
 export const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, phone, password, dateOfBirth } = req.body;
   if (email) {
-  // existence
-  const isUser = await userModel.findOne({email}); //{} , null
-  if (isUser)
-    return next(new Error("email already registered!", { cause: 408 }));
-  // uploud photo
-  if (!req.file)
-    return next(new Error("personalIdCard is required", { cause: 400 }));
-  const cloudFolder = nanoid();
-  const { secure_url, public_id } = await cloudinary.uploader.upload(
-    req.file.path,
-    {
-      folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-    }
-  );
-  //hash password
-  const hashPasword = bcrypt.hashSync(
-    password,
-    parseInt(process.env.SALT_ROUND)
-  );
-  const code = Randomstring.generate({
-    length: 4,
-    charset: "numeric"
-  });
-  const currentTime = new Date();
-  const uniqueNumber = Randomstring.generate({
-    length: 1,
-    charset: "numeric"
-  });
-  const Alphabetic = Randomstring.generate({
-    length: 1,
-    charset: "alphabetic"
-  });
-  const user = await userModel.create({
-    firstName,
-    lastName,
-    userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
-    email,
-    password: hashPasword,
-    dateOfBirth,
-    activationCode: code,
-    createdCodeActivateAccount: currentTime,
-    personalIdCard: { secure_url, public_id }
-  });
-  // token activate account
-    const token = jwk.sign(
-      { id: user._id},
-      process.env.EMAIL_SIGNATURE,
-      { expiresIn: 60 * 60 * 2 }
+    // existence
+    const isUser = await userModel.findOne({ email }); //{} , null
+    if (isUser)
+      return next(new Error("email already registered!", { cause: 408 }));
+    // uploud photo
+    if (!req.file)
+      return next(new Error("personalIdCard is required", { cause: 400 }));
+    const cloudFolder = nanoid();
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      req.file.path,
+      {
+        folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+      }
     );
+    //hash password
+    const hashPasword = bcrypt.hashSync(
+      password,
+      parseInt(process.env.SALT_ROUND)
+    );
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    const uniqueNumber = Randomstring.generate({
+      length: 1,
+      charset: "numeric"
+    });
+    const Alphabetic = Randomstring.generate({
+      length: 1,
+      charset: "alphabetic"
+    });
+    const user = await userModel.create({
+      firstName,
+      lastName,
+      userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
+      email,
+      password: hashPasword,
+      dateOfBirth,
+      activationCode: code,
+      createdCodeActivateAccount: currentTime,
+      personalIdCard: { secure_url, public_id }
+    });
+    // token activate account
+    const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
+      expiresIn: 60 * 60 * 2
+    });
     const isSend = await sendEmail({
       to: email,
       subject: "Please activate your account!",
@@ -80,55 +78,53 @@ export const register = asyncHandler(async (req, res, next) => {
       : next(new Error("wrong please try agian", { cause: 400 }));
   }
   if (phone) {
-   // existence
-  const isUser = await userModel.findOne({phone}); //{} , null
-  if (isUser)
-    return next(new Error("phone already registered!", { cause: 408 }));
-  // uploud photo
-  if (!req.file)
-    return next(new Error("personalIdCard is required", { cause: 400 }));
-  const cloudFolder = nanoid();
-  const { secure_url, public_id } = await cloudinary.uploader.upload(
-    req.file.path,
-    {
-      folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-    }
-  );
-  //hash password
-  const hashPasword = bcrypt.hashSync(
-    password,
-    parseInt(process.env.SALT_ROUND)
-  );
-  const code = Randomstring.generate({
-    length: 4,
-    charset: "numeric"
-  });
-  const currentTime = new Date();
-  const uniqueNumber = Randomstring.generate({
-    length: 1,
-    charset: "numeric"
-  });
-  const Alphabetic = Randomstring.generate({
-    length: 1,
-    charset: "alphabetic"
-  });
-  const user = await userModel.create({
-    firstName,
-    lastName,
-    userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
-    phone,
-    password: hashPasword,
-    dateOfBirth,
-    activationCode: code,
-    createdCodeActivateAccount: currentTime,
-    personalIdCard: { secure_url, public_id }
-  });
-  // token activate account
-    const token = jwk.sign(
-      { id: user._id},
-      process.env.EMAIL_SIGNATURE,
-      { expiresIn: 60 * 60 * 2 }
+    // existence
+    const isUser = await userModel.findOne({ phone }); //{} , null
+    if (isUser)
+      return next(new Error("phone already registered!", { cause: 408 }));
+    // uploud photo
+    if (!req.file)
+      return next(new Error("personalIdCard is required", { cause: 400 }));
+    const cloudFolder = nanoid();
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      req.file.path,
+      {
+        folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+      }
     );
+    //hash password
+    const hashPasword = bcrypt.hashSync(
+      password,
+      parseInt(process.env.SALT_ROUND)
+    );
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    const uniqueNumber = Randomstring.generate({
+      length: 1,
+      charset: "numeric"
+    });
+    const Alphabetic = Randomstring.generate({
+      length: 1,
+      charset: "alphabetic"
+    });
+    const user = await userModel.create({
+      firstName,
+      lastName,
+      userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
+      phone,
+      password: hashPasword,
+      dateOfBirth,
+      activationCode: code,
+      createdCodeActivateAccount: currentTime,
+      personalIdCard: { secure_url, public_id }
+    });
+    // token activate account
+    const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
+      expiresIn: 60 * 60 * 2
+    });
     await sendSMS(phone, `Please activate your account! - ${code}`);
     return res.json({
       success: true,
@@ -153,7 +149,7 @@ export const activateAccount = asyncHandler(async (req, res, next) => {
     if (timeDifference <= validityDuration) {
       await userModel.findByIdAndUpdate(codeDocument._id, {
         isConfirmed: true,
-        $unset: { activationCode: 1 }
+        $unset: { activationCode: 1, createdCodeActivateAccount: 1 }
       });
       return res.json({ Message: "Done Account Active go to login" });
     } else {
@@ -178,7 +174,7 @@ export const ReconfirmAccountActivation = asyncHandler(
     });
     if (!user) return next(new Error("Please create a new account"));
     if (user.isConfirmed) return next(new Error("please go to login"));
-    if(user.email){
+    if (user.email) {
       const isSend = await sendEmail({
         to: user.email,
         subject: "Please activate your account!",
@@ -191,12 +187,15 @@ export const ReconfirmAccountActivation = asyncHandler(
           })
         : next(new Error("wrong please try agian", { cause: 400 }));
     }
-    if(user.phone){
-      await sendSMS(user.phone, `ReconfirmAccountActivation-Please activate your account! - ${code}`);
-    return res.json({
-      success: true,
-      Message: "check SMS!",
-    });
+    if (user.phone) {
+      await sendSMS(
+        user.phone,
+        `ReconfirmAccountActivation-Please activate your account! - ${code}`
+      );
+      return res.json({
+        success: true,
+        Message: "check SMS!"
+      });
     }
   }
 );
@@ -263,7 +262,7 @@ export const resetPasswordEmail = asyncHandler(async (req, res, next) => {
       await userModel.findOneAndUpdate(
         { email },
         {
-          $unset: { forgetCode: 1 }
+          $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
         }
       );
       codeDocument.password = bcrypt.hashSync(
@@ -298,7 +297,7 @@ export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
       await userModel.findOneAndUpdate(
         { phone },
         {
-          $unset: { forgetCode: 1 }
+          $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
         }
       );
       codeDocument.password = bcrypt.hashSync(
@@ -372,55 +371,55 @@ export const ReconfirmResetPasswordPhone = asyncHandler(
   }
 );
 export const login = asyncHandler(async (req, res, next) => {
-  const { email,phone, password } = req.body;
- if(email){
-  const user = await userModel.findOne({ email });
-  if (!user)
-    return next(new Error("You have not created an account", { cause: 400 }));
-  if (!user.isConfirmed)
-    return next(new Error("unactivated aacount!", { cause: 400 }));
-  const comparePassword = bcrypt.compareSync(password, user.password);
-  if (!comparePassword)
-    return next(new Error("In-valid Email Or Password", { cause: 400 }));
-  const token = jwk.sign(
-    { id: user._id, userName: user.userName },
-    process.env.TOKEN_SIGNATURE,
-    { expiresIn: "2d" }
-  );
-  await tokenModel.create({
-    token,
-    user: user._id,
-    agent: req.headers["user-agent"]
-  });
-  user.status = "online";
-  await user.save();
-  return res
-    .status(200)
-    .json({ success: true, Message: "go to home page", auth: token });
- } if(phone){
-  const user = await userModel.findOne({ phone });
-  if (!user)
-    return next(new Error("You have not created an account", { cause: 400 }));
-  if (!user.isConfirmed)
-    return next(new Error("unactivated aacount!", { cause: 400 }));
-  const comparePassword = bcrypt.compareSync(password, user.password);
-  if (!comparePassword)
-    return next(new Error("In-valid Email Or Password", { cause: 400 }));
-  const token = jwk.sign(
-    { id: user._id, userName: user.userName },
-    process.env.TOKEN_SIGNATURE,
-    { expiresIn: "2d" }
-  );
-  await tokenModel.create({
-    token,
-    user: user._id,
-    agent: req.headers["user-agent"]
-  });
-  user.status = "online";
-  await user.save();
-  return res
-    .status(200)
-    .json({ success: true, Message: "go to home page", auth: token });
- }
+  const { email, phone, password } = req.body;
+  if (email) {
+    const user = await userModel.findOne({ email });
+    if (!user)
+      return next(new Error("You have not created an account", { cause: 400 }));
+    if (!user.isConfirmed)
+      return next(new Error("unactivated aacount!", { cause: 400 }));
+    const comparePassword = bcrypt.compareSync(password, user.password);
+    if (!comparePassword)
+      return next(new Error("In-valid Email Or Password", { cause: 400 }));
+    const token = jwk.sign(
+      { id: user._id, userName: user.userName },
+      process.env.TOKEN_SIGNATURE,
+      { expiresIn: "2d" }
+    );
+    await tokenModel.create({
+      token,
+      user: user._id,
+      agent: req.headers["user-agent"]
+    });
+    user.status = "online";
+    await user.save();
+    return res
+      .status(200)
+      .json({ success: true, Message: "go to home page", auth: token });
+  }
+  if (phone) {
+    const user = await userModel.findOne({ phone });
+    if (!user)
+      return next(new Error("You have not created an account", { cause: 400 }));
+    if (!user.isConfirmed)
+      return next(new Error("unactivated aacount!", { cause: 400 }));
+    const comparePassword = bcrypt.compareSync(password, user.password);
+    if (!comparePassword)
+      return next(new Error("In-valid Email Or Password", { cause: 400 }));
+    const token = jwk.sign(
+      { id: user._id, userName: user.userName },
+      process.env.TOKEN_SIGNATURE,
+      { expiresIn: "2d" }
+    );
+    await tokenModel.create({
+      token,
+      user: user._id,
+      agent: req.headers["user-agent"]
+    });
+    user.status = "online";
+    await user.save();
+    return res
+      .status(200)
+      .json({ success: true, Message: "go to home page", auth: token });
+  }
 });
-
