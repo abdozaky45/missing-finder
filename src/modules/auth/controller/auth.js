@@ -420,6 +420,6 @@ export const login = asyncHandler(async (req, res, next) => {
     await user.save();
     return res
       .status(200)
-      .json({ success: true, Message: "go to home page", auth: token });
+      .json({ success: true, Message: "/login", auth: token });
   }
 });
