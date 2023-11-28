@@ -25,7 +25,7 @@ const userSchema = new Schema(
       enum: ["Male", "Female"],
       default: "Male"
     },
-    phone: String,
+    phone: { type: String, unique: true },
     isConfirmed: {
       type: Boolean,
       default: false
