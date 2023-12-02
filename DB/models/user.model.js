@@ -10,7 +10,7 @@ const userSchema = new Schema(
       min: 3,
       max: 30
     },
-    email: { type: String, unique: true, lowercase: true },
+    email: { type: String, lowercase: true },
     password: { type: String, required: true },
     personalIdCard: {
       secure_url: { type: String, required: true },
@@ -25,7 +25,7 @@ const userSchema = new Schema(
       enum: ["Male", "Female"],
       default: "Male"
     },
-    phone: { type: String, unique: true },
+    phone: { type: String },
     isConfirmed: {
       type: Boolean,
       default: false
