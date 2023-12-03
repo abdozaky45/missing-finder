@@ -96,19 +96,7 @@ export const reconfirmResetPassPhoneSchema = joi
   .required();
 export const loginSchema = joi
   .object({
-    email: joi
-      .string()
-      .email({
-        minDomainSegments: 2,
-        maxDomainSegments: 4,
-        tlds: {
-          allow: ["com", "net"]
-        }
-      }),
-      phone:joi.string().max(13),
-    password: joi
-      .string()
-      .pattern(RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])"))
-      .required()
+    loginKey: joi.string().required(),
+    password: joi.string().required()
   })
   .required();

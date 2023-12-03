@@ -371,55 +371,30 @@ export const ReconfirmResetPasswordPhone = asyncHandler(
   }
 );
 export const login = asyncHandler(async (req, res, next) => {
-  const { email, phone, password } = req.body;
-  if (email) {
-    const user = await userModel.findOne({ email });
-    if (!user)
-      return next(new Error("You have not created an account", { cause: 400 }));
-    if (!user.isConfirmed)
-      return next(new Error("unactivated aacount!", { cause: 400 }));
-    const comparePassword = bcrypt.compareSync(password, user.password);
-    if (!comparePassword)
-      return next(new Error("In-valid Email Or Password", { cause: 400 }));
-    const token = jwk.sign(
-      { id: user._id, userName: user.userName },
-      process.env.TOKEN_SIGNATURE,
-      { expiresIn: "2d" }
-    );
-    await tokenModel.create({
-      token,
-      user: user._id,
-      agent: req.headers["user-agent"]
-    });
-    user.status = "online";
-    await user.save();
-    return res
-      .status(200)
-      .json({ success: true, Message: "go to home page", auth: token });
-  }
-  if (phone) {
-    const user = await userModel.findOne({ phone });
-    if (!user)
-      return next(new Error("You have not created an account", { cause: 400 }));
-    if (!user.isConfirmed)
-      return next(new Error("unactivated aacount!", { cause: 400 }));
-    const comparePassword = bcrypt.compareSync(password, user.password);
-    if (!comparePassword)
-      return next(new Error("In-valid Email Or Password", { cause: 400 }));
-    const token = jwk.sign(
-      { id: user._id, userName: user.userName },
-      process.env.TOKEN_SIGNATURE,
-      { expiresIn: "2d" }
-    );
-    await tokenModel.create({
-      token,
-      user: user._id,
-      agent: req.headers["user-agent"]
-    });
-    user.status = "online";
-    await user.save();
-    return res
-      .status(200)
-      .json({ success: true, Message: "/login", auth: token });
-  }
+  const { loginKey, password } = req.body;
+  const user = await userModel.findOne({
+    $or: [{ email: loginKey }, { phone: loginKey }]
+  });
+  if (!user)
+    return next(new Error("You have not created an account", { cause: 400 }));
+  if (!user.isConfirmed)
+    return next(new Error("unactivated account!", { cause: 400 }));
+  const comparePassword = bcrypt.compareSync(password, user.password);
+  if (!comparePassword)
+    return next(new Error("In-valid Email Or Password", { cause: 400 }));
+  const token = jwk.sign(
+    { id: user._id, userName: user.userName },
+    process.env.TOKEN_SIGNATURE,
+    { expiresIn: "2d" }
+  );
+  await tokenModel.create({
+    token,
+    user: user._id,
+    agent: req.headers["user-agent"]
+  });
+  user.status = "online";
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, Message: "go to home page", auth: token });
 });
