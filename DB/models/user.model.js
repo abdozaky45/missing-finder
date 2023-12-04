@@ -28,7 +28,7 @@ const userSchema = new Schema(
     gender: {
       type: String,
       enum: ["Male", "Female"],
-      default: "Male"
+      required: true
     },
     phone: {
       type: String,
