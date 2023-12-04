@@ -14,7 +14,7 @@ import jwk from "jsonwebtoken";
 import tokenModel from "../../../../DB/models/token.model.js";
 import { sendSMS } from "../../../utils/sendSMS.js";
 export const register = asyncHandler(async (req, res, next) => {
-  const { firstName, lastName, email, phone, password, dateOfBirth } = req.body;
+  const { firstName, lastName, email, phone, password, gender,dateOfBirth } = req.body;
   if (email) {
     // existence
     const isUser = await userModel.findOne({ email }); //{} , null
@@ -55,6 +55,7 @@ export const register = asyncHandler(async (req, res, next) => {
       email,
       password: hashPasword,
       dateOfBirth,
+      gender,
       activationCode: code,
       createdCodeActivateAccount: currentTime,
       personalIdCard: { secure_url, public_id }
@@ -117,6 +118,7 @@ export const register = asyncHandler(async (req, res, next) => {
       phone,
       password: hashPasword,
       dateOfBirth,
+      gender,
       activationCode: code,
       createdCodeActivateAccount: currentTime,
       personalIdCard: { secure_url, public_id }
