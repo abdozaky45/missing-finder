@@ -209,7 +209,6 @@ export const ReconfirmAccountActivation = asyncHandler(
     }
   }
 );
-
 export const sendForgetPasswordCodeEmail = asyncHandler(
   async (req, res, next) => {
     const { email } = req.body;
