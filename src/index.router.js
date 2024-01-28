@@ -4,6 +4,7 @@ import authRouter from "./modules/auth/auth.router.js";
 import userRouter from "./modules/user/user.router.js";
 import { globalErrorHandling } from "./utils/errorHandling.js";
 import cors from "cors";
+import finderRouter from "./modules/finder/finder.router.js";
 const bootstrap = (app, express) => {
   if (process.env.Node_ENV === "dev") {
     app.use(morgan("dev"));
@@ -13,6 +14,7 @@ const bootstrap = (app, express) => {
   app.use(express.json());
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
+  app.use("/finder",finderRouter);
   app.all("*", (req, res, next) => {
     return next(new Error("page not found!", { cause: 404 }));
   });

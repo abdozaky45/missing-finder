@@ -19,7 +19,7 @@ const FinderSchema = new Schema({
     ],
     required: true
   },
-  FullName: {
+  fullName: {
     type: String,
     required: true,
     min: 3,
