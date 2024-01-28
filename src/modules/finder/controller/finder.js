@@ -1,6 +1,6 @@
 import { asyncHandler } from "../../../utils/errorHandling.js";
 
-const fetchDataFromApi = async () => {
+const fetchDataFromApi = async (finderImage,fullName) => {
   const response = await axios.post("http://127.0.0.1:5000", {
     finderImage,
     fullName
@@ -22,7 +22,7 @@ export const addFinder = asyncHandler(async (req, res) => {
   const { finderImage, fullName } = req.body;
 
   const data = await fetchDataFromApi(finderImage, fullName);
-  res.json({ data }); // Data reception json
+  res.json({ data }); // send data flask front End
   // update code
   if (data.success) {
     res.json({ message: 'done' });
