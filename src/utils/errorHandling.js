@@ -13,3 +13,10 @@ export const globalErrorHandling = (error, req, res, next) => {
     stack: error.stack
   });
 };
+
+import { Types } from "mongoose";
+export const isValidObjectId = (value, helper) => {
+  return Types.ObjectId.isValid(value)
+    ? true
+    : helper.message("In-valid ObjectId");
+};
