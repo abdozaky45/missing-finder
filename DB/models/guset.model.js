@@ -1,23 +1,32 @@
-import { Schema, Types, model } from "mongoose";
-const FinderSchema = new Schema(
+import { Schema, model, Types } from "mongoose";
+const gusetSchema = new Schema(
   {
-    //Data of the missing person
     userId: {
       type: Types.ObjectId,
       ref: "User",
       required: true
     },
-    fullNameFinder: {
+    NameFinder: {
       type: String,
       required: true,
       min: 3,
       max: 50
     },
-    finderImage: {
+    MissingPersonInformation: {
+      type: String,
+      required: true,
+      enum: [
+        "The Person Himself Confirmed His Name",
+        "Not sure of his/her identity",
+        "don't no"
+      ]
+    },
+    ImageFinder: {
+      type: String,
       secure_url: { type: String, required: true },
       public_id: { type: String, required: true }
     },
-    finderGender: {
+    FinderGender: {
       type: String,
       enum: ["Male", "Female"],
       required: true
@@ -27,36 +36,19 @@ const FinderSchema = new Schema(
       enum: ["healthy", "sick", "SpecialNeeds"],
       required: true
     },
-    Age: { type: String, min: 1, max: 2, required: true },
-    DateOfLoss: {
-      type: Date,
-      default: Date.now
-    },
-    MissingPersonClassification: {
-      type: String,
-      enum: [" Lost", "  Kidnapped", " Runaway", " other"],
-      required: true
-    },
-    WherePersonLost:{type:String, required:true},
+    Age: String,
+    MetMissingPerson: { type: String, required: true },
+    governorateFinder: { type: String, required: true },
+    centerFinder: { type: String, required: true },
+    MissingAddress: { type: String, required: true },
     MissingClothes: String,
     absenceReport: { type: String, enum: ["true", "false"], default: "false" },
-    birthMark: String,
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
-    relationMissingPerson: {
-      type: String,
-      enum: [
-        "first degree relative",
-        "second degree relative",
-        "third degree relative",
-        "others"
-      ],
-      required: true
-    },
     governorateReporter: { type: String, required: true },
     centerReporter: { type: String, required: true },
     ReporterAddress: { type: String, required: true }
   },
   { timestamps: true }
 );
-export const finderModel = model("Finder", FinderSchema);
+export const gusetModel = model("Guset", gusetSchema);
