@@ -1,7 +1,7 @@
 import { asyncHandler } from "../../../utils/errorHandling.js";
 
 const fetchDataFromApi = async (finderImage,fullName) => {
-  const response = await axios.post("http://127.0.0.1:5000", {
+  const response = await axios.post("http://127.0.0.1:5000/upload", {
     finderImage,
     fullName
   });
