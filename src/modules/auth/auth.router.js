@@ -22,28 +22,13 @@ router.post(
   "/ReconfirmAccountActivation",
   authController.ReconfirmAccountActivation
 );
+//Login
+router.post("/login", validation(validator.loginSchema), authController.login);
 // send forget password code email
 router.post(
   "/forgetcode/email",
   validation(validator.forgetCodeEmailSchema),
   authController.sendForgetPasswordCodeEmail
-);
-// send forget password code phone
-router.post(
-  "/forgetcode/phone",
-  validation(validator.forgetCodePhoneSchema),
-  authController.sendForgetPasswordCodePhone
-);
-// reset password email
-router.patch(
-  "/resetPass/email",
-  validation(validator.resetPasswordEmailSchema),
-  authController.resetPasswordEmail
-);
-router.patch(
-  "/resetPass/phone",
-  validation(validator.resetPasswordPhoneSchema),
-  authController.resetPasswordEmail
 );
 //reconfirm ResetPassword email
 router.patch(
@@ -51,13 +36,32 @@ router.patch(
   validation(validator.reconfirmResetPassEmailSchema),
   authController.ReconfirmResetPasswordEmail
 );
+// reset password email
+router.patch(
+  "/resetPass/email",
+  validation(validator.resetPasswordEmailSchema),
+  authController.resetPasswordEmail
+);
+// send forget password code phone
+router.post(
+  "/forgetcode/phone",
+  validation(validator.forgetCodePhoneSchema),
+  authController.sendForgetPasswordCodePhone
+);
 //reconfirm ResetPassword phone
 router.patch(
   "/reconfirmResetPass/phone",
   validation(validator.reconfirmResetPassPhoneSchema),
   authController.ReconfirmResetPasswordPhone
 );
-//Login
-router.post("/login", validation(validator.loginSchema), authController.login);
+// reset password phone
+router.patch(
+  "/resetPass/phone",
+  validation(validator.resetPasswordPhoneSchema),
+  authController.resetPasswordEmail
+);
+
+
+
 export default router;
 
