@@ -66,8 +66,8 @@ export const register = asyncHandler(async (req, res, next) => {
       dateOfBirth,
       gender,
       activationCode: code,
-      createdCodeActivateAccount: currentTime,
-    //  personalIdCard: { secure_url, public_id }
+      createdCodeActivateAccount: currentTime
+      //  personalIdCard: { secure_url, public_id }
     });
     // token activate account
     const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
@@ -129,7 +129,7 @@ export const register = asyncHandler(async (req, res, next) => {
       dateOfBirth,
       gender,
       activationCode: code,
-      createdCodeActivateAccount: currentTime,
+      createdCodeActivateAccount: currentTime
       // personalIdCard: { secure_url, public_id }
     });
     // token activate account
@@ -169,34 +169,6 @@ export const activateAccount = asyncHandler(async (req, res, next) => {
   } else {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
-});
-export const login = asyncHandler(async (req, res, next) => {
-  const { loginKey, password } = req.body;
-  const user = await userModel.findOne({
-    $or: [{ email: loginKey }, { phone: loginKey }]
-  });
-  if (!user)
-    return next(new Error("You have not created an account", { cause: 400 }));
-  if (!user.isConfirmed)
-    return next(new Error("unactivated account!", { cause: 400 }));
-  const comparePassword = bcrypt.compareSync(password, user.password);
-  if (!comparePassword)
-    return next(new Error("In-valid Email Or Password", { cause: 400 }));
-  const token = jwk.sign(
-    { id: user._id, userName: user.userName },
-    process.env.TOKEN_SIGNATURE,
-    { expiresIn: "2d" }
-  );
-  await tokenModel.create({
-    token,
-    user: user._id,
-    agent: req.headers["user-agent"]
-  });
-  user.status = "online";
-  await user.save();
-  return res
-    .status(200)
-    .json({ success: true, Message: "go to home page", auth: token });
 });
 export const ReconfirmAccountActivation = asyncHandler(
   async (req, res, next) => {
@@ -238,6 +210,34 @@ export const ReconfirmAccountActivation = asyncHandler(
     }
   }
 );
+export const login = asyncHandler(async (req, res, next) => {
+  const { loginKey, password } = req.body;
+  const user = await userModel.findOne({
+    $or: [{ email: loginKey }, { phone: loginKey }]
+  });
+  if (!user)
+    return next(new Error("You have not created an account", { cause: 400 }));
+  if (!user.isConfirmed)
+    return next(new Error("unactivated account!", { cause: 400 }));
+  const comparePassword = bcrypt.compareSync(password, user.password);
+  if (!comparePassword)
+    return next(new Error("In-valid Email Or Password", { cause: 400 }));
+  const token = jwk.sign(
+    { id: user._id, userName: user.userName },
+    process.env.TOKEN_SIGNATURE,
+    { expiresIn: "2d" }
+  );
+  await tokenModel.create({
+    token,
+    user: user._id,
+    agent: req.headers["user-agent"]
+  });
+  user.status = "online";
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, Message: "go to home page", auth: token });
+});
 export const sendForgetPasswordCodeEmail = asyncHandler(
   async (req, res, next) => {
     const { email } = req.body;
@@ -294,40 +294,51 @@ export const ReconfirmResetPasswordEmail = asyncHandler(
       : next(new Error("wrong please try agian", { cause: 400 }));
   }
 );
-export const resetPasswordEmail = asyncHandler(async (req, res, next) => {
-  const { forgetCode, email, password } = req.body;
-  const currentTime = new Date();
-  const validityDuration = 5 * 60 * 1000;
-  const isUser = await userModel.findOne({ email });
-  if (!isUser) return next(new Error("user not found", { cause: 404 }));
-  const codeDocument = await userModel.findOne({ forgetCode });
-  if (codeDocument) {
-    const codeCreationTime = codeDocument.createdCodeResetPassword;
-    const timeDifference = currentTime - codeCreationTime;
-    if (timeDifference <= validityDuration) {
-      await userModel.findOneAndUpdate(
-        { email },
-        {
-          $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
-        }
-      );
-      codeDocument.password = bcrypt.hashSync(
-        password,
-        parseInt(process.env.SALT_ROUND)
-      );
-      await codeDocument.save();
-      const tokens = await tokenModel.find({ user: codeDocument._id });
-      tokens.forEach(async token => {
-        token.isValid = false;
-        await token.save();
-      });
-      return res.json({ success: true, Message: "Done" });
+export const codeResetPasswordWithEmail = asyncHandler(
+  async (req, res, next) => {
+    const { forgetCode, email } = req.body;
+    const currentTime = new Date();
+    const validityDuration = 5 * 60 * 1000;
+    const isUser = await userModel.findOne({ email });
+    if (!isUser) return next(new Error("user not found", { cause: 404 }));
+    const codeDocument = await userModel.findOne({ forgetCode });
+    if (codeDocument) {
+      const codeCreationTime = codeDocument.createdCodeResetPassword;
+      const timeDifference = currentTime - codeCreationTime;
+      if (timeDifference <= validityDuration) {
+        await userModel.findOneAndUpdate(
+          { email },
+          {
+            $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
+          }
+        );
+
+        return res.json({
+          success: true,
+          Message: "The code you entered is correct"
+        });
+      } else {
+        return next(new Error("Expiry verification code", { cause: 400 }));
+      }
     } else {
-      return next(new Error("Expiry verification code", { cause: 400 }));
+      return next(
+        new Error("The verification code is In-valid", { cause: 400 })
+      );
     }
-  } else {
-    return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
+);
+export const ResetPasswordWithEmail = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+  const user = await userModel.findOne({ email });
+  if (!user) return next(new Error("In-valid Email", { cause: 400 }));
+  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUND));
+  await user.save();
+  const tokens = await tokenModel.find({ user: user._id });
+  tokens.forEach(async token => {
+    token.isValid = false;
+    await token.save();
+  });
+  return res.json({ success: true, Message: "Done" });
 });
 export const sendForgetPasswordCodePhone = asyncHandler(
   async (req, res, next) => {
@@ -408,4 +419,3 @@ export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
-

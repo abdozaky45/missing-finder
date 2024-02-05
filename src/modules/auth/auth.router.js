@@ -36,11 +36,17 @@ router.patch(
   validation(validator.reconfirmResetPassEmailSchema),
   authController.ReconfirmResetPasswordEmail
 );
-// reset password email
+// codeResetPasswordWithEmail
+router.patch(
+  "/coderesetPass/email",
+  validation(validator.codeResetPasswordEmailSchema),
+  authController.codeResetPasswordWithEmail
+);
+// resetPasswordWithEmail
 router.patch(
   "/resetPass/email",
-  validation(validator.resetPasswordEmailSchema),
-  authController.resetPasswordEmail
+  validation(validator.resetPasswordwithEmail),
+  authController.ResetPasswordWithEmail
 );
 // send forget password code phone
 router.post(
@@ -58,10 +64,6 @@ router.patch(
 router.patch(
   "/resetPass/phone",
   validation(validator.resetPasswordPhoneSchema),
-  authController.resetPasswordEmail
+  authController.codeResetPasswordWithEmail
 );
-
-
-
 export default router;
-
