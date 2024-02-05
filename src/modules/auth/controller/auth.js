@@ -21,7 +21,7 @@ export const register = asyncHandler(async (req, res, next) => {
     phone,
     password,
     gender,
-    // dateOfBirth
+    dateOfBirth
   } = req.body;
   if (email) {
     // existence
@@ -38,6 +38,7 @@ export const register = asyncHandler(async (req, res, next) => {
     //     folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
     //   }
     // );
+
     //hash password
     const hashPasword = bcrypt.hashSync(
       password,
