@@ -170,6 +170,34 @@ export const activateAccount = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
+export const login = asyncHandler(async (req, res, next) => {
+  const { loginKey, password } = req.body;
+  const user = await userModel.findOne({
+    $or: [{ email: loginKey }, { phone: loginKey }]
+  });
+  if (!user)
+    return next(new Error("You have not created an account", { cause: 400 }));
+  if (!user.isConfirmed)
+    return next(new Error("unactivated account!", { cause: 400 }));
+  const comparePassword = bcrypt.compareSync(password, user.password);
+  if (!comparePassword)
+    return next(new Error("In-valid Email Or Password", { cause: 400 }));
+  const token = jwk.sign(
+    { id: user._id, userName: user.userName },
+    process.env.TOKEN_SIGNATURE,
+    { expiresIn: "2d" }
+  );
+  await tokenModel.create({
+    token,
+    user: user._id,
+    agent: req.headers["user-agent"]
+  });
+  user.status = "online";
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, Message: "go to home page", auth: token });
+});
 export const ReconfirmAccountActivation = asyncHandler(
   async (req, res, next) => {
     const { token } = req.headers;
@@ -237,25 +265,33 @@ export const sendForgetPasswordCodeEmail = asyncHandler(
       : next(new Error("wrong please try agian", { cause: 400 }));
   }
 );
-export const sendForgetPasswordCodePhone = asyncHandler(
+export const ReconfirmResetPasswordEmail = asyncHandler(
   async (req, res, next) => {
-    const { phone } = req.body;
-    const user = await userModel.findOne({ phone });
-    if (!user)
-      return next(new Error("This account is not available", { cause: 400 }));
+    const { email } = req.body;
     const code = Randomstring.generate({
       length: 4,
       charset: "numeric"
     });
     const currentTime = new Date();
-    user.forgetCode = code;
-    user.createdCodeResetPassword = currentTime;
-    await user.save();
-    await sendSMS(phone, `Reset your password code! - ${code}`);
-    return res.json({
-      success: true,
-      Message: "check SMS!"
+    const user = await userModel.findOneAndUpdate(
+      { email },
+      {
+        forgetCode: code,
+        createdCodeResetPassword: currentTime
+      }
+    );
+    if (!user) return next(new Error("user not found", { cause: 404 }));
+    const isSend = await sendEmail({
+      to: user.email,
+      subject: "Reset your password!",
+      html: tempResetPassword(user.firstName, code)
     });
+    return isSend
+      ? res.json({
+          success: true,
+          Message: "check inbox !"
+        })
+      : next(new Error("wrong please try agian", { cause: 400 }));
   }
 );
 export const resetPasswordEmail = asyncHandler(async (req, res, next) => {
@@ -293,6 +329,50 @@ export const resetPasswordEmail = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
+export const sendForgetPasswordCodePhone = asyncHandler(
+  async (req, res, next) => {
+    const { phone } = req.body;
+    const user = await userModel.findOne({ phone });
+    if (!user)
+      return next(new Error("This account is not available", { cause: 400 }));
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    user.forgetCode = code;
+    user.createdCodeResetPassword = currentTime;
+    await user.save();
+    await sendSMS(phone, `Reset your password code! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!"
+    });
+  }
+);
+export const ReconfirmResetPasswordPhone = asyncHandler(
+  async (req, res, next) => {
+    const { phone } = req.body;
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    const user = await userModel.findOneAndUpdate(
+      { phone },
+      {
+        forgetCode: code,
+        createdCodeResetPassword: currentTime
+      }
+    );
+    if (!user) return next(new Error("user not found", { cause: 404 }));
+    await sendSMS(phone, `Please activate your account! - ${code}`);
+    return res.json({
+      success: true,
+      Message: "check SMS!"
+    });
+  }
+);
 export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
   const { forgetCode, phone, password } = req.body;
   const currentTime = new Date();
@@ -328,83 +408,4 @@ export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
-export const ReconfirmResetPasswordEmail = asyncHandler(
-  async (req, res, next) => {
-    const { email } = req.body;
-    const code = Randomstring.generate({
-      length: 4,
-      charset: "numeric"
-    });
-    const currentTime = new Date();
-    const user = await userModel.findOneAndUpdate(
-      { email },
-      {
-        forgetCode: code,
-        createdCodeResetPassword: currentTime
-      }
-    );
-    if (!user) return next(new Error("user not found", { cause: 404 }));
-    const isSend = await sendEmail({
-      to: user.email,
-      subject: "Reset your password!",
-      html: tempResetPassword(user.firstName, code)
-    });
-    return isSend
-      ? res.json({
-          success: true,
-          Message: "check inbox !"
-        })
-      : next(new Error("wrong please try agian", { cause: 400 }));
-  }
-);
-export const ReconfirmResetPasswordPhone = asyncHandler(
-  async (req, res, next) => {
-    const { phone } = req.body;
-    const code = Randomstring.generate({
-      length: 4,
-      charset: "numeric"
-    });
-    const currentTime = new Date();
-    const user = await userModel.findOneAndUpdate(
-      { phone },
-      {
-        forgetCode: code,
-        createdCodeResetPassword: currentTime
-      }
-    );
-    if (!user) return next(new Error("user not found", { cause: 404 }));
-    await sendSMS(phone, `Please activate your account! - ${code}`);
-    return res.json({
-      success: true,
-      Message: "check SMS!"
-    });
-  }
-);
-export const login = asyncHandler(async (req, res, next) => {
-  const { loginKey, password } = req.body;
-  const user = await userModel.findOne({
-    $or: [{ email: loginKey }, { phone: loginKey }]
-  });
-  if (!user)
-    return next(new Error("You have not created an account", { cause: 400 }));
-  if (!user.isConfirmed)
-    return next(new Error("unactivated account!", { cause: 400 }));
-  const comparePassword = bcrypt.compareSync(password, user.password);
-  if (!comparePassword)
-    return next(new Error("In-valid Email Or Password", { cause: 400 }));
-  const token = jwk.sign(
-    { id: user._id, userName: user.userName },
-    process.env.TOKEN_SIGNATURE,
-    { expiresIn: "2d" }
-  );
-  await tokenModel.create({
-    token,
-    user: user._id,
-    agent: req.headers["user-agent"]
-  });
-  user.status = "online";
-  await user.save();
-  return res
-    .status(200)
-    .json({ success: true, Message: "go to home page", auth: token });
-});
+
