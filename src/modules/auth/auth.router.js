@@ -2,12 +2,12 @@ import { Router } from "express";
 import * as authController from "./controller/auth.js";
 import { validation } from "../../middleware/validation.middelware.js";
 import * as validator from "./auth.validation.js";
-import { fileObjects, fileUpload } from "../../utils/multer.js";
+//import { fileObjects, fileUpload } from "../../utils/multer.js";
 const router = Router();
 // register
 router.post(
   "/register",
-  fileUpload(fileObjects.image).single("personalIdCard"),
+  //fileUpload(fileObjects.image).single("personalIdCard"),
   validation(validator.registerSchema),
   authController.register
 );

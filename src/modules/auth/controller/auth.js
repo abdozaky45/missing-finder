@@ -8,7 +8,7 @@ import {
   TempConfirmationEmail,
   tempResetPassword
 } from "../../../utils/html.js";
-import { nanoid } from "nanoid";
+//import { nanoid } from "nanoid";
 import cloudinary from "../../../utils/cloudinary.js";
 import jwk from "jsonwebtoken";
 import tokenModel from "../../../../DB/models/token.model.js";
@@ -21,7 +21,7 @@ export const register = asyncHandler(async (req, res, next) => {
     phone,
     password,
     gender,
-    dateOfBirth
+    // dateOfBirth
   } = req.body;
   if (email) {
     // existence
@@ -29,15 +29,15 @@ export const register = asyncHandler(async (req, res, next) => {
     if (isUser)
       return next(new Error("email already registered!", { cause: 408 }));
     // uploud photo
-    if (!req.file)
-      return next(new Error("personalIdCard is required", { cause: 400 }));
-    const cloudFolder = nanoid();
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-      }
-    );
+    // if (!req.file)
+    //   return next(new Error("personalIdCard is required", { cause: 400 }));
+    // const cloudFolder = nanoid();
+    // const { secure_url, public_id } = await cloudinary.uploader.upload(
+    //   req.file.path,
+    //   {
+    //     folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+    //   }
+    // );
     //hash password
     const hashPasword = bcrypt.hashSync(
       password,
@@ -66,7 +66,7 @@ export const register = asyncHandler(async (req, res, next) => {
       gender,
       activationCode: code,
       createdCodeActivateAccount: currentTime,
-      personalIdCard: { secure_url, public_id }
+    //  personalIdCard: { secure_url, public_id }
     });
     // token activate account
     const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
@@ -92,15 +92,15 @@ export const register = asyncHandler(async (req, res, next) => {
     if (isUser)
       return next(new Error("phone already registered!", { cause: 408 }));
     // uploud photo
-    if (!req.file)
-      return next(new Error("personalIdCard is required", { cause: 400 }));
-    const cloudFolder = nanoid();
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-      }
-    );
+    // if (!req.file)
+    //   return next(new Error("personalIdCard is required", { cause: 400 }));
+    // const cloudFolder = nanoid();
+    // const { secure_url, public_id } = await cloudinary.uploader.upload(
+    //   req.file.path,
+    //   {
+    //     folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+    //   }
+    // );
     //hash password
     const hashPasword = bcrypt.hashSync(
       password,
@@ -129,7 +129,7 @@ export const register = asyncHandler(async (req, res, next) => {
       gender,
       activationCode: code,
       createdCodeActivateAccount: currentTime,
-      personalIdCard: { secure_url, public_id }
+      // personalIdCard: { secure_url, public_id }
     });
     // token activate account
     const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
