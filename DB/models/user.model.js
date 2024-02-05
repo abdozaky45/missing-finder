@@ -17,10 +17,10 @@ const userSchema = new Schema(
       sparse: true
     },
     password: { type: String, required: true },
-    personalIdCard: {
-      secure_url: { type: String, required: true },
-      public_id: { type: String, required: true }
-    },
+    // personalIdCard: {
+    //   secure_url: { type: String, required: true },
+    //   public_id: { type: String, required: true }
+    // },
     dateOfBirth: {
       type: Date,
       required: true
