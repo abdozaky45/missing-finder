@@ -103,9 +103,14 @@ export const reconfirmResetPassPhoneSchema = joi
     phone: joi.string().max(13).required()
   })
   .required();
-export const resetPasswordPhoneSchema = joi
+export const coderesetPasswordPhoneSchema = joi
   .object({
     forgetCode: joi.string().max(4).required(),
+    phone: joi.string().max(13).required(),
+  })
+  .required();
+  export const resetPasswordPhoneSchema = joi
+  .object({
     phone: joi.string().max(13).required(),
     password: joi
       .string()

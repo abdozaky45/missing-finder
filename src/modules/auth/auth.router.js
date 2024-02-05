@@ -36,13 +36,13 @@ router.patch(
   validation(validator.reconfirmResetPassEmailSchema),
   authController.ReconfirmResetPasswordEmail
 );
-// codeResetPasswordWithEmail
+// code Reset Password With Email
 router.patch(
   "/coderesetPass/email",
   validation(validator.codeResetPasswordEmailSchema),
   authController.codeResetPasswordWithEmail
 );
-// resetPasswordWithEmail
+// reset Password With Email
 router.patch(
   "/resetPass/email",
   validation(validator.resetPasswordwithEmail),
@@ -60,10 +60,15 @@ router.patch(
   validation(validator.reconfirmResetPassPhoneSchema),
   authController.ReconfirmResetPasswordPhone
 );
-// reset password phone
+// code reset password with phone
+router.patch(
+  "/coderesetPass/phone",
+  validation(validator.coderesetPasswordPhoneSchema),
+  authController.codeResetPasswordPhone
+);
 router.patch(
   "/resetPass/phone",
   validation(validator.resetPasswordPhoneSchema),
-  authController.codeResetPasswordWithEmail
+  authController.resetPasswordWithPhone
 );
 export default router;

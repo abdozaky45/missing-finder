@@ -384,8 +384,8 @@ export const ReconfirmResetPasswordPhone = asyncHandler(
     });
   }
 );
-export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
-  const { forgetCode, phone, password } = req.body;
+export const codeResetPasswordPhone = asyncHandler(async (req, res, next) => {
+  const { forgetCode, phone} = req.body;
   const currentTime = new Date();
   const validityDuration = 5 * 60 * 1000;
   const isUser = await userModel.findOne({ phone });
@@ -401,21 +401,24 @@ export const resetPasswordPhone = asyncHandler(async (req, res, next) => {
           $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
         }
       );
-      codeDocument.password = bcrypt.hashSync(
-        password,
-        parseInt(process.env.SALT_ROUND)
-      );
-      await codeDocument.save();
-      const tokens = await tokenModel.find({ user: codeDocument._id });
-      tokens.forEach(async token => {
-        token.isValid = false;
-        await token.save();
-      });
-      return res.json({ success: true, Message: "Done" });
+      return res.json({ success: true, Message: "The code you entered is correct" });
     } else {
       return next(new Error("Expiry verification code", { cause: 400 }));
     }
   } else {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
+});
+export const resetPasswordWithPhone = asyncHandler(async (req,res,next)=>{
+  const { phone, password } = req.body;
+  const user = await userModel.findOne({ phone });
+  if (!user) return next(new Error("In-valid phone", { cause: 400 }));
+  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUND));
+  await user.save();
+  const tokens = await tokenModel.find({ user: user._id });
+  tokens.forEach(async token => {
+    token.isValid = false;
+    await token.save();
+  });
+  return res.json({ success: true, Message: "Done" });
 });
