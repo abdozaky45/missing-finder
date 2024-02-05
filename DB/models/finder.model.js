@@ -34,12 +34,15 @@ const FinderSchema = new Schema(
     },
     MissingPersonClassification: {
       type: String,
-      enum: [" Lost", "  Kidnapped", " Runaway", " other"],
+      enum: [" Lost", "  Kidnapped", " Runaway", "others"],
       required: true
     },
-    WherePersonLost:{type:String, required:true},
-    MissingClothes: String,
-    absenceReport: { type: String, enum: ["true", "false"], default: "false" },
+    WherePersonLost: { type: String, required: true },
+    absenceReport: {
+      type: String,
+      enum: ["Yes", "No", "No clue"],
+      default: "No clue"
+    },
     birthMark: String,
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
@@ -53,8 +56,8 @@ const FinderSchema = new Schema(
       ],
       required: true
     },
-    governorateReporter: { type: String, required: true },
-    centerReporter: { type: String, required: true },
+    governorateReporter: { type: String, required: true },  
+    stateCountry: { type: String, required: true }, 
     ReporterAddress: { type: String, required: true }
   },
   { timestamps: true }

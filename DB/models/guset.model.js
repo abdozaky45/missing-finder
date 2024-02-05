@@ -8,7 +8,6 @@ const gusetSchema = new Schema(
     },
     NameFinder: {
       type: String,
-      required: true,
       min: 3,
       max: 50
     },
@@ -18,7 +17,7 @@ const gusetSchema = new Schema(
       enum: [
         "The Person Himself Confirmed His Name",
         "Not sure of his/her identity",
-        "don't no"
+        "Don't Know"
       ]
     },
     ImageFinder: {
@@ -39,14 +38,14 @@ const gusetSchema = new Schema(
     Age: String,
     MetMissingPerson: { type: String, required: true },
     governorateFinder: { type: String, required: true },
-    centerFinder: { type: String, required: true },
+    stateCountry: { type: String, required: true },
     MissingAddress: { type: String, required: true },
     MissingClothes: String,
-    absenceReport: { type: String, enum: ["true", "false"], default: "false" },
+    absenceReport: { type: String, enum: ["Yes", "No"], default: "No" },
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
     governorateReporter: { type: String, required: true },
-    centerReporter: { type: String, required: true },
+    stateCountryReporter: { type: String, required: true },
     ReporterAddress: { type: String, required: true }
   },
   { timestamps: true }
