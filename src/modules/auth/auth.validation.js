@@ -17,7 +17,7 @@ export const registerSchema = joi
     confirmPassword: joi.string().valid(joi.ref("password")).required(),
     dateOfBirth: joi.date().required(),
     gender: joi.string().valid("Male", "Female").required(),
-    phone: joi.string().max(13)
+    phone: joi.string().max(14)
   })
   .required();
 export const activateAccountSchema = joi
@@ -95,23 +95,23 @@ export const resetPasswordwithEmail = joi
   .required();
 export const forgetCodePhoneSchema = joi
   .object({
-    phone: joi.string().max(13).required()
+    phone: joi.string().max(14).required()
   })
   .required();
 export const reconfirmResetPassPhoneSchema = joi
   .object({
-    phone: joi.string().max(13).required()
+    phone: joi.string().max(14).required()
   })
   .required();
 export const coderesetPasswordPhoneSchema = joi
   .object({
     forgetCode: joi.string().max(4).required(),
-    phone: joi.string().max(13).required(),
+    phone: joi.string().max(14).required(),
   })
   .required();
   export const resetPasswordPhoneSchema = joi
   .object({
-    phone: joi.string().max(13).required(),
+    phone: joi.string().max(14).required(),
     password: joi
       .string()
       .pattern(RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])"))
