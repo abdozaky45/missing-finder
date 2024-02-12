@@ -9,7 +9,7 @@ import {
   tempResetPassword
 } from "../../../utils/html.js";
 //import { nanoid } from "nanoid";
-import cloudinary from "../../../utils/cloudinary.js";
+//import cloudinary from "../../../utils/cloudinary.js";
 import jwk from "jsonwebtoken";
 import tokenModel from "../../../../DB/models/token.model.js";
 import { sendSMS } from "../../../utils/sendSMS.js";
@@ -217,8 +217,23 @@ export const login = asyncHandler(async (req, res, next) => {
   });
   if (!user)
     return next(new Error("You have not created an account", { cause: 400 }));
-  if (!user.isConfirmed)
+  if (!user.isConfirmed) {
+    const code = Randomstring.generate({
+      length: 4,
+      charset: "numeric"
+    });
+    const currentTime = new Date();
+    await sendEmail({
+      to: user.email,
+      subject: "Please activate your account!",
+      html: TempConfirmationEmail(user.firstName, code)
+    });
+    user.activationCode = code;
+    user.createdCodeActivateAccount = currentTime;
+    await user.save();
+    
     return next(new Error("unactivated account!", { cause: 400 }));
+  }
   const comparePassword = bcrypt.compareSync(password, user.password);
   if (!comparePassword)
     return next(new Error("In-valid Email Or Password", { cause: 400 }));
@@ -385,7 +400,7 @@ export const ReconfirmResetPasswordPhone = asyncHandler(
   }
 );
 export const codeResetPasswordPhone = asyncHandler(async (req, res, next) => {
-  const { forgetCode, phone} = req.body;
+  const { forgetCode, phone } = req.body;
   const currentTime = new Date();
   const validityDuration = 5 * 60 * 1000;
   const isUser = await userModel.findOne({ phone });
@@ -401,7 +416,10 @@ export const codeResetPasswordPhone = asyncHandler(async (req, res, next) => {
           $unset: { forgetCode: 1, createdCodeResetPassword: 1 }
         }
       );
-      return res.json({ success: true, Message: "The code you entered is correct" });
+      return res.json({
+        success: true,
+        Message: "The code you entered is correct"
+      });
     } else {
       return next(new Error("Expiry verification code", { cause: 400 }));
     }
@@ -409,7 +427,7 @@ export const codeResetPasswordPhone = asyncHandler(async (req, res, next) => {
     return next(new Error("The verification code is In-valid", { cause: 400 }));
   }
 });
-export const resetPasswordWithPhone = asyncHandler(async (req,res,next)=>{
+export const resetPasswordWithPhone = asyncHandler(async (req, res, next) => {
   const { phone, password } = req.body;
   const user = await userModel.findOne({ phone });
   if (!user) return next(new Error("In-valid phone", { cause: 400 }));
