@@ -18,12 +18,10 @@ export const register = asyncHandler(async (req, res, next) => {
     firstName,
     lastName,
     email,
-    phone,
     password,
     gender,
     dateOfBirth
   } = req.body;
-  if (email) {
     // existence
     const isUser = await userModel.findOne({ email }); //{} , null
     if (isUser)
@@ -86,64 +84,64 @@ export const register = asyncHandler(async (req, res, next) => {
           token_Activate_Account: token
         })
       : next(new Error("wrong please try agian", { cause: 400 }));
-  }
-  if (phone) {
-    // existence
-    const isUser = await userModel.findOne({ phone }); //{} , null
-    if (isUser)
-      return next(new Error("phone already registered!", { cause: 408 }));
-    // uploud photo
-    // if (!req.file)
-    //   return next(new Error("personalIdCard is required", { cause: 400 }));
-    // const cloudFolder = nanoid();
-    // const { secure_url, public_id } = await cloudinary.uploader.upload(
-    //   req.file.path,
-    //   {
-    //     folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
-    //   }
-    // );
-    //hash password
-    const hashPasword = bcrypt.hashSync(
-      password,
-      parseInt(process.env.SALT_ROUND)
-    );
-    const code = Randomstring.generate({
-      length: 4,
-      charset: "numeric"
-    });
-    const currentTime = new Date();
-    const uniqueNumber = Randomstring.generate({
-      length: 1,
-      charset: "numeric"
-    });
-    const Alphabetic = Randomstring.generate({
-      length: 1,
-      charset: "alphabetic"
-    });
-    const user = await userModel.create({
-      firstName,
-      lastName,
-      userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
-      phone,
-      password: hashPasword,
-      dateOfBirth,
-      gender,
-      activationCode: code,
-      createdCodeActivateAccount: currentTime
-      // personalIdCard: { secure_url, public_id }
-    });
-    // token activate account
-    const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
-      expiresIn: 60 * 60 * 2
-    });
-    await sendSMS(phone, `Please activate your account! - ${code}`);
-    return res.json({
-      success: true,
-      Message: "check SMS!",
-      result: user,
-      token_Activate_Account: token
-    });
-  }
+  
+  // if (phone) {
+  //   // existence
+  //   const isUser = await userModel.findOne({ phone }); //{} , null
+  //   if (isUser)
+  //     return next(new Error("phone already registered!", { cause: 408 }));
+  //   // uploud photo
+  //   // if (!req.file)
+  //   //   return next(new Error("personalIdCard is required", { cause: 400 }));
+  //   // const cloudFolder = nanoid();
+  //   // const { secure_url, public_id } = await cloudinary.uploader.upload(
+  //   //   req.file.path,
+  //   //   {
+  //   //     folder: `${process.env.FOLDER_CLOUD_NAME}/personalIdCard/${cloudFolder}`
+  //   //   }
+  //   // );
+  //   //hash password
+  //   const hashPasword = bcrypt.hashSync(
+  //     password,
+  //     parseInt(process.env.SALT_ROUND)
+  //   );
+  //   const code = Randomstring.generate({
+  //     length: 4,
+  //     charset: "numeric"
+  //   });
+  //   const currentTime = new Date();
+  //   const uniqueNumber = Randomstring.generate({
+  //     length: 1,
+  //     charset: "numeric"
+  //   });
+  //   const Alphabetic = Randomstring.generate({
+  //     length: 1,
+  //     charset: "alphabetic"
+  //   });
+  //   const user = await userModel.create({
+  //     firstName,
+  //     lastName,
+  //     userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
+  //     phone,
+  //     password: hashPasword,
+  //     dateOfBirth,
+  //     gender,
+  //     activationCode: code,
+  //     createdCodeActivateAccount: currentTime
+  //     // personalIdCard: { secure_url, public_id }
+  //   });
+  //   // token activate account
+  //   const token = jwk.sign({ id: user._id }, process.env.EMAIL_SIGNATURE, {
+  //     expiresIn: 60 * 60 * 2
+  //   });
+  //   await sendSMS(phone, `Please activate your account! - ${code}`);
+  //   return res.json({
+  //     success: true,
+  //     Message: "check SMS!",
+  //     result: user,
+  //     token_Activate_Account: token
+  //   });
+  // }
 });
 export const activateAccount = asyncHandler(async (req, res, next) => {
   const { token } = req.headers;

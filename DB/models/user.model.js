@@ -14,7 +14,8 @@ const userSchema = new Schema(
       type: String,
       lowercase: true,
       unique: true,
-      sparse: true
+      required: true,
+      // sparse: true
     },
     password: { type: String, required: true },
     // personalIdCard: {
@@ -30,11 +31,11 @@ const userSchema = new Schema(
       enum: ["Male", "Female"],
       required: true
     },
-    phone: {
-      type: String,
-      unique: true,
-      sparse: true
-    },
+    // phone: {
+    //   type: String,
+    //   unique: true,
+    //   sparse: true
+    // },
     isConfirmed: {
       type: Boolean,
       default: false
