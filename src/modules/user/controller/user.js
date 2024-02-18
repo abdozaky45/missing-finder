@@ -7,6 +7,8 @@ export const users = asyncHandler(async (req, res, next) => {
     .select(
       "firstName lastName email phone password gender personalIdCard dateOfBirth"
     );
+    console.log("test")
+    console.log("tesssssssssssssst");
   return res.json({ success: true, result: user });
 });
 export const deleteUser = asyncHandler(async (req, res, next) => {
