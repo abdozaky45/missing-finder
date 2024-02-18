@@ -9,6 +9,7 @@ export const users = asyncHandler(async (req, res, next) => {
     );
     console.log("test")
     console.log("tesssssssssssssst");
+    console.log("tesssssssssssssstttttttttttt");
   return res.json({ success: true, result: user });
 });
 export const deleteUser = asyncHandler(async (req, res, next) => {
