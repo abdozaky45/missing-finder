@@ -236,7 +236,7 @@ export const login = asyncHandler(async (req, res, next) => {
   if (!comparePassword)
     return next(new Error("In-valid Email Or Password", { cause: 400 }));
   const token = jwk.sign(
-    { id: user._id, userName: user.userName },
+    { id: user._id, userName: user.userName, email:user.email },
     process.env.TOKEN_SIGNATURE,
     { expiresIn: "2d" }
   );
