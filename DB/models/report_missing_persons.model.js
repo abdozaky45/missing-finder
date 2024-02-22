@@ -1,5 +1,5 @@
 import { Schema, Types, model } from "mongoose";
-const FinderSchema = new Schema(
+const report_missing_personsSchema = new Schema(
   {
     //Data of the missing person
     userId: {
@@ -62,4 +62,4 @@ const FinderSchema = new Schema(
   },
   { timestamps: true }
 );
-export const finderModel = model("Finder", FinderSchema);
+export const reportMissingPersonsrModel = model("Finder", report_missing_personsSchema);

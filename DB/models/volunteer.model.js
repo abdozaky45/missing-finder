@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-const gusetSchema = new Schema(
+const volunteerSchema = new Schema(
   {
     userId: {
       type: Types.ObjectId,
@@ -44,10 +44,10 @@ const gusetSchema = new Schema(
     absenceReport: { type: String, enum: ["Yes", "No"], default: "No" },
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
-    governorateReporter: { type: String, required: true },
-    stateCountryReporter: { type: String, required: true },
-    ReporterAddress: { type: String, required: true }
+    governorateVolunteer: { type: String, required: true },
+    stateCountryVolunteer: { type: String, required: true },
+    volunteerAddress: { type: String, required: true }
   },
   { timestamps: true }
 );
-export const gusetModel = model("Guset", gusetSchema);
+export const volunteerModel = model("Guset", volunteerSchema);

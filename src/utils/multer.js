@@ -1,16 +1,32 @@
 import multer, { diskStorage } from "multer";
 export const fileObjects = {
-  image: ["image/png", "image/jpeg", "image/jpg"],
-  files: ["application/msword", "application/pdf"],
+  image: [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/gif",
+    "image/bmp",
+    "image/webp",
+    "image/svg+xml",
+    "image/tiff",
+    "image/vnd.microsoft.icon"
+  ],
+  
 };
-export const fileUpload = (fileArray) => {
-    const fileFilter =(req,file,cb)=>{
-        if(!fileArray.includes(file.mimetype)){
-            return cb(new Error("in-valid file mimetype",{cause:400}),false);
-        }
-        return cb(null,true);
+export const fileUpload = (filetype, folder) => {
+  const storage = diskStorage({
+    destination: `missingfinder/${folder}`,
+    filename: (req, file, cb) => {
+      console.log(file);
+      cb(null, `${nanoid()}__${file.originalname}`);
     }
-  //storage : diskStorage({}) by default save  file in folder "temp"
- const multerUpload = multer({ storage: diskStorage({}), fileFilter });
+  });
+  const fileFilter = (req, file, cb) => {
+    if (!filetype.includes(file.mimetype)) {
+      return cb(new Error("in-valid file mimetype", { cause: 400 }), false);
+    }
+    return cb(null, true);
+  };
+  const multerUpload = multer({ storage, fileFilter });
   return multerUpload;
 };
