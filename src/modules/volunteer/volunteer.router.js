@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as report_missing_personsController from "./controller/report_missing_persons.js";
+import * as volunteerController from "./controller/volunteer.js";
 import { auth } from "../../middleware/authentication .middleware.js";
 import { fileObjects, upload } from "../../utils/multer.js";
 import { autherized } from "../../middleware/authorization.middleware.js";
@@ -9,9 +9,9 @@ router.post(
   auth,
   autherized("user"),
   upload({
-    folder: "users/missingPersons",
+    folder: "users/foundPersons",
     filetype: fileObjects.image
-  }).single("finderImage"),
-  report_missing_personsController.addFinder
+  }).single("ImageFoundPerson"),
+  volunteerController.addFoundPerson
 );
 export default router;

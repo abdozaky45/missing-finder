@@ -6,7 +6,7 @@ const volunteerSchema = new Schema(
       ref: "User",
       required: true
     },
-    NameFinder: {
+    NameFoundPerson: {
       type: String,
       min: 3,
       max: 50
@@ -20,12 +20,11 @@ const volunteerSchema = new Schema(
         "Don't Know"
       ]
     },
-    ImageFinder: {
+    ImageFoundPerson: {
       type: String,
-      secure_url: { type: String, required: true },
-      public_id: { type: String, required: true }
+      required: true
     },
-    FinderGender: {
+    FoundPersonGender: {
       type: String,
       enum: ["Male", "Female"],
       required: true
@@ -37,9 +36,9 @@ const volunteerSchema = new Schema(
     },
     Age: String,
     MetMissingPerson: { type: String, required: true },
-    governorateFinder: { type: String, required: true },
-    stateCountry: { type: String, required: true },
-    MissingAddress: { type: String, required: true },
+    governorateFoundPerson: { type: String, required: true },
+    stateCountryFoundPerson: { type: String, required: true },
+    AddressFoundPerson: { type: String, required: true },
     MissingClothes: String,
     absenceReport: { type: String, enum: ["Yes", "No"], default: "No" },
     // Data of the reporting person
