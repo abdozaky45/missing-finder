@@ -1,5 +1,5 @@
 import { Router } from "express";
-import *as finderController from "./controller/report_missing_persons.js";
+import *as report_missing_persons from "./controller/report_missing_persons.js";
 const router = Router();
-router.post("/",finderController.addFinder)
+router.post("/",report_missing_persons.addFinder)
 export default router;
