@@ -14,8 +14,8 @@ const report_missing_personsSchema = new Schema(
       max: 50
     },
     finderImage: {
-      secure_url: { type: String, required: true },
-      public_id: { type: String, required: true }
+      type: String,
+      required: true
     },
     finderGender: {
       type: String,
@@ -34,7 +34,7 @@ const report_missing_personsSchema = new Schema(
     },
     MissingPersonClassification: {
       type: String,
-      enum: [" Lost", "  Kidnapped", " Runaway", "others"],
+      enum: ["Lost", "Kidnapped", "Runaway", "others"],
       required: true
     },
     WherePersonLost: { type: String, required: true },
@@ -56,10 +56,13 @@ const report_missing_personsSchema = new Schema(
       ],
       required: true
     },
-    governorateReporter: { type: String, required: true },  
-    stateCountry: { type: String, required: true }, 
+    governorateReporter: { type: String, required: true },
+    stateCountry: { type: String, required: true },
     ReporterAddress: { type: String, required: true }
   },
   { timestamps: true }
 );
-export const reportMissingPersonsrModel = model("Finder", report_missing_personsSchema);
+export const reportMissingPersonsrModel = model(
+  "Finder",
+  report_missing_personsSchema
+);

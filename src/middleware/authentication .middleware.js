@@ -1,4 +1,5 @@
 import tokenModel from "../../DB/models/token.model.js";
+import userModel from "../../DB/models/user.model.js";
 import { asyncHandler } from "../utils/errorHandling.js";
 import jwk from "jsonwebtoken";
 export const auth = asyncHandler(async (req, res, next) => {

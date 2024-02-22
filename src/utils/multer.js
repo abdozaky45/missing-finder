@@ -1,4 +1,5 @@
 import multer, { diskStorage } from "multer";
+import { nanoid } from "nanoid";
 export const fileObjects = {
   image: [
     "image/png",
@@ -13,7 +14,7 @@ export const fileObjects = {
   ],
   
 };
-export const fileUpload = (filetype, folder) => {
+export const upload = ({filetype, folder}) => {
   const storage = diskStorage({
     destination: `missingfinder/${folder}`,
     filename: (req, file, cb) => {
