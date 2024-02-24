@@ -25,7 +25,7 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
   //const data = await fetchDataFromApi(ImageFoundPerson);
   const missingPersons = await volunteerModel.create({
     userId: req.user.id,
-    ImageFoundPerson: req.file.path,
+    imageFoundPerson: req.file.path,
     ...req.body
   });
   return res.json({ success: true, result: missingPersons });

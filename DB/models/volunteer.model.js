@@ -6,12 +6,12 @@ const volunteerSchema = new Schema(
       ref: "User",
       required: true
     },
-    NameFoundPerson: {
+    nameFoundPerson: {
       type: String,
       min: 3,
       max: 50
     },
-    MissingPersonInformation: {
+    missingPersonInformation: {
       type: String,
       required: true,
       enum: [
@@ -20,26 +20,26 @@ const volunteerSchema = new Schema(
         "Don't Know"
       ]
     },
-    ImageFoundPerson: {
+    imageFoundPerson: {
       type: String,
       required: true
     },
-    FoundPersonGender: {
+    foundPersonGender: {
       type: String,
       enum: ["Male", "Female"],
       required: true
     },
-    HealthStatus: {
+    healthStatus: {
       type: String,
       enum: ["healthy", "sick", "SpecialNeeds"],
       required: true
     },
-    Age: String,
-    MetMissingPerson: { type: String, required: true },
+    age: String,
+    metMissingPerson: { type: String, required: true },
     governorateFoundPerson: { type: String, required: true },
     stateCountryFoundPerson: { type: String, required: true },
-    AddressFoundPerson: { type: String, required: true },
-    MissingClothes: String,
+    addressFoundPerson: { type: String, required: true },
+    missingClothes: String,
     absenceReport: { type: String, enum: ["Yes", "No"], default: "No" },
     // Data of the reporting person
     personalId: { type: String,min:0,max:14, required: true, },

@@ -13,7 +13,7 @@ router.post(
   upload({
     folder: "users/foundPersons",
     filetype: fileObjects.image
-  }).single("ImageFoundPerson"),
+  }).single("imageFoundPerson"),
   validation(validator.addFoundPerson),
   volunteerController.addFoundPerson
 );
