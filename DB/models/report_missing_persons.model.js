@@ -30,7 +30,7 @@ const report_missing_personsSchema = new Schema(
     Age: { type: String, min: 1, max: 2, required: true },
     DateOfLoss: {
       type: Date,
-      default: Date.now
+      required: true
     },
     MissingPersonClassification: {
       type: String,
@@ -45,6 +45,7 @@ const report_missing_personsSchema = new Schema(
     },
     birthMark: String,
     // Data of the reporting person
+    personalId: { type: String, min: 0, max: 14, required: true },
     phone: { type: String, min: 0, max: 11, required: true },
     relationMissingPerson: {
       type: String,
