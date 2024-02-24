@@ -7,37 +7,37 @@ const report_missing_personsSchema = new Schema(
       ref: "User",
       required: true
     },
-    fullNameFinder: {
+    fullNameMissing: {
       type: String,
       required: true,
       min: 3,
       max: 50
     },
-    finderImage: {
+    missingImage: {
       type: String,
       required: true
     },
-    finderGender: {
+    missingGender: {
       type: String,
       enum: ["Male", "Female"],
       required: true
     },
-    HealthStatus: {
+    healthStatus: {
       type: String,
       enum: ["healthy", "sick", "SpecialNeeds"],
       required: true
     },
-    Age: { type: String, min: 1, max: 2, required: true },
-    DateOfLoss: {
+    age: { type: String, min: 1, max: 2, required: true },
+    dateOfLoss: {
       type: Date,
       required: true
     },
-    MissingPersonClassification: {
+    missingPersonClassification: {
       type: String,
       enum: ["Lost", "Kidnapped", "Runaway", "others"],
       required: true
     },
-    WherePersonLost: { type: String, required: true },
+    wherePersonLost: { type: String, required: true },
     absenceReport: {
       type: String,
       enum: ["Yes", "No", "No clue"],
@@ -59,7 +59,7 @@ const report_missing_personsSchema = new Schema(
     },
     governorateReporter: { type: String, required: true },
     stateCountry: { type: String, required: true },
-    ReporterAddress: { type: String, required: true }
+    reporterAddress: { type: String, required: true }
   },
   { timestamps: true }
 );

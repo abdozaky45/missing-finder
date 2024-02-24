@@ -13,7 +13,7 @@ router.post(
   upload({
     folder: "users/missingPersons",
     filetype: fileObjects.image
-  }).single("finderImage"),
+  }).single("missingImage"),
   validation(validator.addFinder),
   report_missing_personsController.addFinder
 );

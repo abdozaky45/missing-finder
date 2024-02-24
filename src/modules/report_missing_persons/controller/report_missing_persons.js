@@ -25,7 +25,7 @@ export const addFinder = asyncHandler(async (req, res, next) => {
   // const data = await fetchDataFromApi(finderImage);
   const missingPersons = await reportMissingPersonsrModel.create({
     userId: req.user.id,
-    finderImage: req.file.path,
+    missingImage: req.file.path,
     ...req.body
   });
   return res.json({ success: true, result: missingPersons });
