@@ -15,7 +15,7 @@ export const addFoundPerson = joi
       .string()
       .valid("healthy", "sick", "SpecialNeeds")
       .required(),
-    age: joi.string().min(1).max(2),
+    age: joi.number().integer().min(1).max(2),
     metMissingPerson: joi.string().required(),
     governorateFoundPerson: joi.string().required(),
     stateCountryFoundPerson: joi.string().required(),
