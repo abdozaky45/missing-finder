@@ -27,7 +27,7 @@ const report_missing_personsSchema = new Schema(
       enum: ["healthy", "sick", "SpecialNeeds"],
       required: true
     },
-    age: { type:Number, min: 1, max: 2, required: true },
+    age: { type:Number, min: 1, max: 100, required: true },
     dateOfLoss: {
       type: Date,
       required: true

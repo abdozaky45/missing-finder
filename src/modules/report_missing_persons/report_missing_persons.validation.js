@@ -7,7 +7,7 @@ export const addFinder = joi
       .string()
       .valid("healthy", "sick", "SpecialNeeds")
       .required(),
-    age: joi.number().integer().min(1).max(2).required(),
+    age: joi.number().integer().min(1).max(100).required(),
     dateOfLoss: joi.date().required(),
     missingPersonClassification: joi
       .string()
