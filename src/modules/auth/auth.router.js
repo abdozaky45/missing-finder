@@ -19,8 +19,8 @@ router.post(
 );
 // ReconfirmAccountActivation
 router.post(
-  validation(validator.activateAccountSchema),
   "/ReconfirmAccountActivation",
+  validation(validator.activateAccountSchema),
   authController.ReconfirmAccountActivation
 );
 //Login
