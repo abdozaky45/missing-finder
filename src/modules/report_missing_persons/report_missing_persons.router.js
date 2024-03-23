@@ -16,7 +16,7 @@ router.post(
 );
 
 router.post(
-  "/check-fac",
+  "foundPersons/check-fac",
   auth,
   autherized("user"),
   report_missing_personsController.checkFace
