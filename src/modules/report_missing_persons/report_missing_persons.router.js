@@ -6,15 +6,19 @@ import { autherized } from "../../middleware/authorization.middleware.js";
 import { validation } from "../../middleware/validation.middelware.js";
 import * as validator from "./report_missing_persons.validation.js";
 const router = Router();
+
 router.post(
-  "/",
+  "/addFinder",
   auth,
   autherized("user"),
-  upload({
-    folder: "users/missingPersons",
-    filetype: fileObjects.image
-  }).single("missingImage"),
-  validation(validator.addFinder),
-  report_missing_personsController.addFinder
+  validation(validator.addMissingPerson),
+  report_missing_personsController.addMissingFinder
+);
+
+router.post(
+  "/check-fac",
+  auth,
+  autherized("user"),
+  report_missing_personsController.checkFace
 );
 export default router;

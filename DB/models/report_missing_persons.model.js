@@ -7,15 +7,16 @@ const report_missing_personsSchema = new Schema(
       ref: "User",
       required: true
     },
+    image: 
+      {
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
     fullNameMissing: {
       type: String,
       required: true,
       min: 3,
       max: 50
-    },
-    missingImage: {
-      type: String,
-      required: true
     },
     missingGender: {
       type: String,

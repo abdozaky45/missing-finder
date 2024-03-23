@@ -1,7 +1,7 @@
 import joi from "joi";
-export const addFinder = joi
+export const addMissingPerson = joi
   .object({
-    fullNameMissing: joi.string().min(3).max(50).required(),
+    label: joi.string().required(),
     missingGender: joi.string().valid("Male", "Female").required(),
     healthStatus: joi
       .string()
@@ -33,3 +33,4 @@ export const addFinder = joi
     reporterAddress: joi.string().required()
   })
   .required();
+

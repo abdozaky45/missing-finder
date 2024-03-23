@@ -4,6 +4,10 @@ import authRouter from "./modules/auth/auth.router.js";
 import userRouter from "./modules/user/user.router.js";
 import { globalErrorHandling } from "./utils/errorHandling.js";
 import cors from "cors";
+import fileUpload from 'express-fileupload';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import report_missing_personsRouter from "./modules/report_missing_persons/report_missing_persons.router.js";
 import volunteerRouter from "./modules/volunteer/volunteer.router.js";
 const bootstrap = (app, express) => {
@@ -13,11 +17,27 @@ const bootstrap = (app, express) => {
   // This is CORS-enabled for all origins
   app.use(cors());
   app.use(express.json());
-  app.use("/missingfinder",express.static("missingfinder"));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+  const tempDir = path.join(
+    __dirname,
+    "src",
+    "modules",
+    "report_missing_persons",
+    "controller",
+    "custom_temp_folder"
+  );
+  app.use(
+    fileUpload({
+      useTempFiles: true,
+      tempFileDir: tempDir
+    })
+  );
+  app.use("/missingfinder", express.static("missingfinder"));
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
-  app.use("/missingPersons",report_missing_personsRouter);
-  app.use("/volunteer",volunteerRouter)
+  app.use("/missingPersons", report_missing_personsRouter);
+  app.use("/volunteer", volunteerRouter);
   app.all("*", (req, res, next) => {
     return next(new Error("page not found!", { cause: 404 }));
   });
