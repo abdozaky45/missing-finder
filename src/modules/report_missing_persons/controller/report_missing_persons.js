@@ -116,3 +116,4 @@ let result = await uploadLabeledImages([File1, File2, File3], label);
   let result = await getDescriptorsFromDB(File1);
   res.json({ result });
  })
+ 
