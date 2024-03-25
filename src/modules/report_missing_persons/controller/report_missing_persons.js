@@ -7,9 +7,11 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 import faceModel from '../../../../DB/models/face.model.js';
 import cloudinary from '../../../utils/cloudinary.js';
+import Randomstring from 'randomstring';
 import {
   reportMissingPersonsrModel,
 } from '../../../../DB/models/report_missing_persons.model.js';
+import slugify from 'slugify';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -19,7 +21,7 @@ async function LoadModels() {
   await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/models");
 }
 LoadModels();
-async function uploadLabeledImages (images, label,id) {
+async function uploadLabeledImages (images, label, id) {
   try {
     let counter = 0;
     const descriptions = [];
@@ -40,7 +42,7 @@ async function uploadLabeledImages (images, label,id) {
     const createFace = new faceModel ({
       label: label,
       descriptions: descriptions,
-      reportMissingPersonId:id
+      reportMissingPersonId: id,
     });
     await createFace.save ();
     return true;
@@ -49,7 +51,6 @@ async function uploadLabeledImages (images, label,id) {
     return error;
   }
 }
-
 async function getDescriptorsFromDB (image) {
   // Get all the face data from mongodb and loop through each of them to read the data
   let faces = await faceModel.find ();
@@ -63,7 +64,7 @@ async function getDescriptorsFromDB (image) {
     // Turn the DB face docs to
     faces[i] = new faceapi.LabeledFaceDescriptors (
       faces[i].label,
-      faces[i].descriptions,
+      faces[i].descriptions
     );
   }
 
@@ -88,35 +89,55 @@ async function getDescriptorsFromDB (image) {
   );
   return results;
 }
-
 export const addMissingFinder = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   const File2 = req.files.File2.tempFilePath;
   const File3 = req.files.File3.tempFilePath;
-  const label = req.body.label;
+  const label1 = req.body.label1;
   if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
     return next (new Error ('Please upload all three files.'));
   const {secure_url, public_id} = await cloudinary.uploader.upload (
     req.files.File1.tempFilePath,
     {folder: `/missingPersons`}
   );
+  const uniqueNumber = Randomstring.generate ({
+    length: 1,
+    charset: 'numeric',
+  });
+  const Alphabetic = Randomstring.generate ({
+    length: 1,
+    charset: 'alphabetic',
+  });
+  const label = slugify (`${label1}-${uniqueNumber}${Alphabetic}`);
+  console.log (label);
   const reportMiss = await reportMissingPersonsrModel.create ({
     userId: req.user.id,
     image: {secure_url, public_id},
     fullNameMissing: label,
     ...req.body,
   });
-  const id = reportMiss._id
-  let result = await uploadLabeledImages ([File1, File2, File3], label,id);
+  const id = reportMiss._id;
+
+  let result = await uploadLabeledImages ([File1, File2, File3], label, id);
   if (result) {
-    res.json ({success:true,message: 'Face data stored successfully'});
+    res.json ({success: true, message: 'Face data stored successfully'});
   } else {
-    res.json ({success:false,message: 'Something went wrong, please try again.'});
+    res.json ({
+      success: false,
+      message: 'Something went wrong, please try again.',
+    });
   }
 });
 export const checkFace = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   if (!req.files.File1) return next (new Error ('Please upload file.'));
   let result = await getDescriptorsFromDB (File1);
-  res.json ({result});
+  const fullNameMissing = result[0].label;
+  if (fullNameMissing == 'unknown')
+    return res.json ({success: false, result, missingData: 'unknown'});
+
+  const reportMissing = await reportMissingPersonsrModel.findOne ({
+    fullNameMissing,
+  });
+  return res.json ({success: true, result, missingData: reportMissing});
 });

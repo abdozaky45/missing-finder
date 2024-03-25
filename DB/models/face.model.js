@@ -3,6 +3,7 @@ const faceSchema = new Schema ({
   label: {
     type: String,
     required: true,
+    unique:true
   },
   descriptions: {
     type: Array,

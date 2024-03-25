@@ -1,7 +1,7 @@
 import joi from "joi";
 export const addMissingPerson = joi
   .object({
-    label: joi.string().required(),
+    label1: joi.string().required(),
     missingGender: joi.string().valid("Male", "Female").required(),
     healthStatus: joi
       .string()
