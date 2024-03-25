@@ -98,7 +98,7 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
     return next (new Error ('Please upload all three files.'));
   const {secure_url, public_id} = await cloudinary.uploader.upload (
     req.files.File1.tempFilePath,
-    {folder: `/missingPersons`}
+    {folder: `missingPersons`}
   );
   const uniqueNumber = Randomstring.generate ({
     length: 1,
