@@ -46,7 +46,6 @@ const report_missing_personsSchema = new Schema(
     },
     birthMark: String,
     // Data of the reporting person
-    personalId: { type: String, min: 0, max: 14, required: true },
     phone: { type: String, min: 0, max: 11, required: true },
     relationMissingPerson: {
       type: String,

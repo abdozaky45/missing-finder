@@ -17,7 +17,6 @@ export const addMissingPerson = joi
     absenceReport: joi.string().valid("Yes", "No", "No clue").required(),
     birthMark: joi.string(),
     // Data of the reporting person
-    personalId: joi.string().min(0).max(14).required(),
     phone: joi.string().min(0).max(11).required(),
     relationMissingPerson: joi
       .string()
@@ -58,7 +57,6 @@ export const addMissingPerson = joi
       missingClothes: joi.string(),
       absenceReport: joi.string().valid("Yes", "No").required(),
       // Data of the reporting person
-      personalId: joi.string().min(0).max(14).required(),
       phone: joi.string().min(0).max(11).required(),
       governorateVolunteer: joi.string().required(),
       stateCountryVolunteer: joi.string().required(),

@@ -43,7 +43,6 @@ const volunteerSchema = new Schema (
     missingClothes: String,
     absenceReport: {type: String, enum: ['Yes', 'No'], default: 'No'},
     // Data of the reporting person
-    personalId: {type: String, min: 0, max: 14, required: true},
     phone: {type: String, min: 0, max: 11, required: true},
     governorateVolunteer: {type: String, required: true},
     stateCountryVolunteer: {type: String, required: true},
