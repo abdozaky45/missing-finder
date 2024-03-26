@@ -131,16 +131,22 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
 export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   if (!req.files.File1) return next (new Error ('Please upload file.'));
-  let result = await getDescriptorsFromDB (File1);
-  const fullNameMissing = result[0].label;
-  if (fullNameMissing == 'unknown')
+  let result = await getDescriptorsFromDB(File1);
+  const searchKey = result[0].label;
+  if (searchKey == 'unknown')
     return res.json ({success: false, result, missingData: 'unknown'});
-
-  const reportMissing = await reportMissingPersonsrModel.findOne ({
-    fullNameMissing,
+  const reportMissing = await reportMissingPersonsrModel.findOne ({ 
+    fullNameMissing:searchKey
   });
+  if(reportMissing)
   return res.json ({success: true, result, missingData: reportMissing});
+  const reportFound = await volunteerModel.findOne ({
+    nameFoundPerson:searchKey,
+ });
+ if(reportFound)
+  return res.json ({success: true, result, missingData: reportFound});
 });
+
 export const addFoundPerson = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   const File2 = req.files.File2.tempFilePath;
@@ -178,17 +184,4 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
       message: 'Something went wrong, please try again.',
     });
   }
-});
-export const checkFaceFoundPerson = asyncHandler (async (req, res, next) => {
-  const File1 = req.files.File1.tempFilePath;
-  if (!req.files.File1) return next (new Error ('Please upload file.'));
-  let result = await getDescriptorsFromDB (File1);
-  const nameFoundPerson = result[0].label;
-  if (nameFoundPerson == 'unknown')
-    return res.json ({success: false, result, missingData: 'unknown'});
-
-  const reportMissing = await volunteerModel.findOne ({
-     nameFoundPerson,
-  });
-  return res.json ({success: true, result, missingData: reportMissing});
 });

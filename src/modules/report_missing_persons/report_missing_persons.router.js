@@ -16,12 +16,6 @@ router.post (
 );
 
 router.post (
-  '/check-fac',
-  auth,
-  autherized ('user'),
-  report_missing_personsController.checkFaceMissingPerson
-);
-router.post (
   '/addFound',
   auth,
   autherized ('user'),
@@ -33,6 +27,7 @@ router.post (
   '/foundPersons/check-fac',
   auth,
   autherized ('user'),
-  report_missing_personsController.checkFaceFoundPerson
+  report_missing_personsController.checkFaceMissingPerson
 );
+
 export default router;
