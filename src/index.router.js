@@ -10,7 +10,6 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 import report_missing_personsRouter
   from './modules/report_missing_persons/report_missing_persons.router.js';
-import volunteerRouter from './modules/volunteer/volunteer.router.js';
 const bootstrap = (app, express) => {
   if (process.env.Node_ENV === 'dev') {
     app.use (morgan ('dev'));
@@ -38,7 +37,6 @@ const bootstrap = (app, express) => {
   app.use ('/auth', authRouter);
   app.use ('/user', userRouter);
   app.use ('/missingPersons', report_missing_personsRouter);
-  app.use ('/volunteer', volunteerRouter);
   app.all ('*', (req, res, next) => {
     return next (new Error ('page not found!', {cause: 404}));
   });

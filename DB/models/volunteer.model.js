@@ -20,10 +20,11 @@ const volunteerSchema = new Schema (
         "Don't Know",
       ],
     },
-    imageFoundPerson: {
-      type: String,
-      required: true,
-    },
+    image: 
+      {
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
     foundPersonGender: {
       type: String,
       enum: ['Male', 'Female'],

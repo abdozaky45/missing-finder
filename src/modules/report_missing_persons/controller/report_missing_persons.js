@@ -12,6 +12,7 @@ import {
   reportMissingPersonsrModel,
 } from '../../../../DB/models/report_missing_persons.model.js';
 import slugify from 'slugify';
+import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -109,7 +110,6 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
     charset: 'alphabetic',
   });
   const label = slugify (`${label1}-${uniqueNumber}${Alphabetic}`);
-  console.log (label);
   const reportMiss = await reportMissingPersonsrModel.create ({
     userId: req.user.id,
     image: {secure_url, public_id},
@@ -128,7 +128,7 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
     });
   }
 });
-export const checkFace = asyncHandler (async (req, res, next) => {
+export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   if (!req.files.File1) return next (new Error ('Please upload file.'));
   let result = await getDescriptorsFromDB (File1);
@@ -138,6 +138,57 @@ export const checkFace = asyncHandler (async (req, res, next) => {
 
   const reportMissing = await reportMissingPersonsrModel.findOne ({
     fullNameMissing,
+  });
+  return res.json ({success: true, result, missingData: reportMissing});
+});
+export const addFoundPerson = asyncHandler (async (req, res, next) => {
+  const File1 = req.files.File1.tempFilePath;
+  const File2 = req.files.File2.tempFilePath;
+  const File3 = req.files.File3.tempFilePath;
+  const label1 = req.body.label1;
+  if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
+    return next (new Error ('Please upload all three files.'));
+  const {secure_url, public_id} = await cloudinary.uploader.upload (
+    req.files.File1.tempFilePath,
+    {folder: `foundPerson`}
+  );
+  const uniqueNumber = Randomstring.generate ({
+    length: 1,
+    charset: 'numeric',
+  });
+  const Alphabetic = Randomstring.generate ({
+    length: 1,
+    charset: 'alphabetic',
+  });
+  const label = slugify (`${label1}-${uniqueNumber}${Alphabetic}`);
+  const reportMiss = await volunteerModel.create ({
+    userId: req.user.id,
+    image: {secure_url, public_id},
+    nameFoundPerson: label,
+    ...req.body,
+  });
+  const id = reportMiss._id;
+
+  let result = await uploadLabeledImages ([File1, File2, File3], label, id);
+  if (result) {
+    res.json ({success: true, message: 'Face data stored successfully'});
+  } else {
+    res.json ({
+      success: false,
+      message: 'Something went wrong, please try again.',
+    });
+  }
+});
+export const checkFaceFoundPerson = asyncHandler (async (req, res, next) => {
+  const File1 = req.files.File1.tempFilePath;
+  if (!req.files.File1) return next (new Error ('Please upload file.'));
+  let result = await getDescriptorsFromDB (File1);
+  const nameFoundPerson = result[0].label;
+  if (nameFoundPerson == 'unknown')
+    return res.json ({success: false, result, missingData: 'unknown'});
+
+  const reportMissing = await volunteerModel.findOne ({
+     nameFoundPerson,
   });
   return res.json ({success: true, result, missingData: reportMissing});
 });
