@@ -155,6 +155,7 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
     image: {secure_url, public_id},
     nameFoundPerson: label,
     fullName:label1,
+    dateOfFound:Date.now(),
     ...req.body,
   });
   const id = reportMiss._id;

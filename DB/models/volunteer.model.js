@@ -41,6 +41,10 @@ const volunteerSchema = new Schema (
       enum: ['healthy', 'sick', 'SpecialNeeds'],
       required: true,
     },
+    dateOfFound: {
+      type: Date,
+      required: true
+    },
     age: {type: Number, min: 1, max: 100},
     city: {type: String, required: true},
     country: {type: String, required: true},
