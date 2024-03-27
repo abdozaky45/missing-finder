@@ -18,6 +18,12 @@ const report_missing_personsSchema = new Schema(
       min: 3,
       max: 50
     },
+    fullName: {
+      type: String,
+      required: true,
+      min: 3,
+      max: 50
+    },
     missingGender: {
       type: String,
       enum: ["Male", "Female"],

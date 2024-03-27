@@ -12,6 +12,12 @@ const volunteerSchema = new Schema (
       max: 50,
       required:true
     },
+    fullName: {
+      type: String,
+      required: true,
+      min: 3,
+      max: 50
+    },
     missingPersonInformation: {
       type: String,
       required: true,

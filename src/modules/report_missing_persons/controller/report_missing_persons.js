@@ -114,6 +114,7 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
     userId: req.user.id,
     image: {secure_url, public_id},
     fullNameMissing: label,
+    fullName:label1,
     ...req.body,
   });
   const id = reportMiss._id;
@@ -127,24 +128,6 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
       message: 'Something went wrong, please try again.',
     });
   }
-});
-export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
-  const File1 = req.files.File1.tempFilePath;
-  if (!req.files.File1) return next (new Error ('Please upload file.'));
-  let result = await getDescriptorsFromDB(File1);
-  const searchKey = result[0].label;
-  if (searchKey == 'unknown')
-    return res.json ({success: false, result, missingData: 'unknown'});
-  const reportMissing = await reportMissingPersonsrModel.findOne ({ 
-    fullNameMissing:searchKey
-  });
-  if(reportMissing)
-  return res.json ({success: true, result, missingData: reportMissing});
-  const reportFound = await volunteerModel.findOne ({
-    nameFoundPerson:searchKey,
- });
- if(reportFound)
-  return res.json ({success: true, result, missingData: reportFound});
 });
 
 export const addFoundPerson = asyncHandler (async (req, res, next) => {
@@ -171,6 +154,7 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
     userId: req.user.id,
     image: {secure_url, public_id},
     nameFoundPerson: label,
+    fullName:label1,
     ...req.body,
   });
   const id = reportMiss._id;
@@ -185,3 +169,23 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
     });
   }
 });
+
+export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
+  const File1 = req.files.File1.tempFilePath;
+  if (!req.files.File1) return next (new Error ('Please upload file.'));
+  let result = await getDescriptorsFromDB(File1);
+  const searchKey = result[0].label;
+  if (searchKey == 'unknown')
+    return res.json ({success: false, result, missingData: 'unknown'});
+  const reportMissing = await reportMissingPersonsrModel.findOne ({ 
+    fullNameMissing:searchKey
+  });
+  if(reportMissing)
+  return res.json ({success: true, result, missingData: reportMissing});
+  const reportFound = await volunteerModel.findOne ({
+    nameFoundPerson:searchKey,
+ });
+ if(reportFound)
+  return res.json ({success: true, result, missingData: reportFound});
+});
+
