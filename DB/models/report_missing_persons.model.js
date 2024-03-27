@@ -45,7 +45,7 @@ const report_missing_personsSchema = new Schema(
       default: "No clue"
     },
     city: { type: String, required: true },
-    Country: { type: String, required: true },
+    country: { type: String, required: true },
     birthMark: String,
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
