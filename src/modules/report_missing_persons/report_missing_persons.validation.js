@@ -34,7 +34,7 @@ export const addMissingPerson = joi
 
 export const addFoundPerson = joi
   .object ({
-    label1: joi.string ().min (3).max (50).required (),
+    label1: joi.string ().required (),
     missingPersonInformation: joi
       .string ()
       .valid (
@@ -51,7 +51,6 @@ export const addFoundPerson = joi
     city: joi.string ().required (),
     country: joi.string ().required (),
     address: joi.string ().required (),
-    missingClothes: joi.string (),
     absenceReport: joi.string ().valid ('Yes', 'No', 'No clue').required (),
     // Data of the reporting person
     phone: joi.string ().min (0).max (11).required (),
