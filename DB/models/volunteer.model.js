@@ -10,14 +10,14 @@ const volunteerSchema = new Schema (
       type: String,
       min: 3,
       max: 50,
+      required:true
     },
     missingPersonInformation: {
       type: String,
       required: true,
       enum: [
         'The Person Himself Confirmed His Name',
-        'Not sure of his/her identity',
-        "Don't Know",
+        'Not sure of his/her identity'
       ],
     },
     image: 
@@ -36,17 +36,16 @@ const volunteerSchema = new Schema (
       required: true,
     },
     age: {type: Number, min: 1, max: 100},
-    metMissingPerson: {type: String, required: true},
-    governorateFoundPerson: {type: String, required: true},
-    stateCountryFoundPerson: {type: String, required: true},
-    addressFoundPerson: {type: String, required: true},
-    missingClothes: String,
-    absenceReport: {type: String, enum: ['Yes', 'No'], default: 'No'},
+    city: {type: String, required: true},
+    country: {type: String, required: true},
+    address: {type: String, required: true},
+    absenceReport: {
+      type: String,
+      enum: ["Yes", "No", "No clue"],
+      default: "No clue"
+    },
     // Data of the reporting person
     phone: {type: String, min: 0, max: 11, required: true},
-    governorateVolunteer: {type: String, required: true},
-    stateCountryVolunteer: {type: String, required: true},
-    volunteerAddress: {type: String, required: true},
   },
   {timestamps: true}
 );

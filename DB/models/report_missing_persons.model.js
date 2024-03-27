@@ -44,6 +44,8 @@ const report_missing_personsSchema = new Schema(
       enum: ["Yes", "No", "No clue"],
       default: "No clue"
     },
+    city: { type: String, required: true },
+    Country: { type: String, required: true },
     birthMark: String,
     // Data of the reporting person
     phone: { type: String, min: 0, max: 11, required: true },
@@ -57,9 +59,6 @@ const report_missing_personsSchema = new Schema(
       ],
       required: true
     },
-    governorateReporter: { type: String, required: true },
-    stateCountry: { type: String, required: true },
-    reporterAddress: { type: String, required: true }
   },
   { timestamps: true }
 );
