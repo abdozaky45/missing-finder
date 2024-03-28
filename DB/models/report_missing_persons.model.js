@@ -12,17 +12,17 @@ const report_missing_personsSchema = new Schema(
         secure_url: { type: String, required: true },
         public_id: { type: String, required: true },
       },
-    fullNameMissing: {
+    labelFaceModel: {
       type: String,
       required: true,
       min: 3,
-      max: 50
+      max: 100
     },
     fullName: {
       type: String,
       required: true,
       min: 3,
-      max: 50
+      max: 100
     },
     missingGender: {
       type: String,

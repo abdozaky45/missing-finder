@@ -6,17 +6,17 @@ const volunteerSchema = new Schema (
       ref: 'User',
       required: true,
     },
-    nameFoundPerson: {
+    labelFaceModel: {
       type: String,
       min: 3,
-      max: 50,
+      max: 100,
       required:true
     },
     fullName: {
       type: String,
       required: true,
       min: 3,
-      max: 50
+      max: 100
     },
     missingPersonInformation: {
       type: String,

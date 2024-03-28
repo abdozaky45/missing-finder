@@ -113,7 +113,7 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
   const reportMiss = await reportMissingPersonsrModel.create ({
     userId: req.user.id,
     image: {secure_url, public_id},
-    fullNameMissing: label,
+    labelFaceModel: label,
     fullName:label1,
     ...req.body,
   });
@@ -153,7 +153,7 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
   const reportMiss = await volunteerModel.create ({
     userId: req.user.id,
     image: {secure_url, public_id},
-    nameFoundPerson: label,
+    labelFaceModel: label,
     fullName:label1,
     dateOfFound:Date.now(),
     ...req.body,
