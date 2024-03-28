@@ -179,12 +179,12 @@ export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
   if (searchKey == 'unknown')
     return res.json ({success: false, result, missingData: 'unknown'});
   const reportMissing = await reportMissingPersonsrModel.findOne ({ 
-    fullNameMissing:searchKey
+    labelFaceModel:searchKey
   });
   if(reportMissing)
   return res.json ({success: true, result, missingData: reportMissing});
   const reportFound = await volunteerModel.findOne ({
-    nameFoundPerson:searchKey,
+    labelFaceModel:searchKey,
  });
  if(reportFound)
   return res.json ({success: true, result, missingData: reportFound});
