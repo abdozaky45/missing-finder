@@ -6,7 +6,6 @@ import {autherized} from '../../middleware/authorization.middleware.js';
 import {validation} from '../../middleware/validation.middelware.js';
 import * as validator from './report_missing_persons.validation.js';
 const router = Router ();
-
 router.post (
   '/addFinder',
   auth,
@@ -29,5 +28,33 @@ router.post (
   autherized ('user'),
   report_missing_personsController.checkFaceMissingPerson
 );
+router.post (
+  '/getAllMissingPersons',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidation),
+  report_missing_personsController.getAllMissingPersons
+);
+router.post (
+  '/getAllFoundPersons',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidation),
+  report_missing_personsController.getAllFoundPersons
+);
+router.post (
+  '/all',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidationWithName),
+  report_missing_personsController.searchMissingPersonsWithName
+);
 
+router.post (
+  '/foundPersons/all',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidationWithName),
+  report_missing_personsController.searchFoundPersonsWithName
+);
 export default router;

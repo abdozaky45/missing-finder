@@ -12,7 +12,7 @@ import {
   reportMissingPersonsrModel,
 } from '../../../../DB/models/report_missing_persons.model.js';
 import slugify from 'slugify';
-import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
+import {volunteerModel} from '../../../../DB/models/volunteer.model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -96,7 +96,7 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
   const File3 = req.files.File3.tempFilePath;
   const label1 = req.body.label1;
   if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
-    return next (new Error ('Please upload all three files.'));
+    return next (new Error ('Please upload all three files.', {casue: 400}));
   const {secure_url, public_id} = await cloudinary.uploader.upload (
     req.files.File1.tempFilePath,
     {folder: `missingPersons`}
@@ -114,16 +114,16 @@ export const addMissingFinder = asyncHandler (async (req, res, next) => {
     userId: req.user.id,
     image: {secure_url, public_id},
     labelFaceModel: label,
-    fullName:label1,
+    fullName: label1,
     ...req.body,
   });
   const id = reportMiss._id;
 
   let result = await uploadLabeledImages ([File1, File2, File3], label, id);
   if (result) {
-    res.json ({success: true, message: 'Face data stored successfully'});
+    return res.json ({success: true, message: 'Face data stored successfully'});
   } else {
-    res.json ({
+    return res.json ({
       success: false,
       message: 'Something went wrong, please try again.',
     });
@@ -136,7 +136,7 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
   const File3 = req.files.File3.tempFilePath;
   const label1 = req.body.label1;
   if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
-    return next (new Error ('Please upload all three files.'));
+    return next (new Error ('Please upload all three files.', {casue: 400}));
   const {secure_url, public_id} = await cloudinary.uploader.upload (
     req.files.File1.tempFilePath,
     {folder: `foundPerson`}
@@ -154,17 +154,17 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
     userId: req.user.id,
     image: {secure_url, public_id},
     labelFaceModel: label,
-    fullName:label1,
-    dateOfFound:Date.now(),
+    fullName: label1,
+    dateOfFound: Date.now (),
     ...req.body,
   });
   const id = reportMiss._id;
 
   let result = await uploadLabeledImages ([File1, File2, File3], label, id);
   if (result) {
-    res.json ({success: true, message: 'Face data stored successfully'});
+    return res.json ({success: true, message: 'Face data stored successfully'});
   } else {
-    res.json ({
+    return res.json ({
       success: false,
       message: 'Something went wrong, please try again.',
     });
@@ -174,19 +174,70 @@ export const addFoundPerson = asyncHandler (async (req, res, next) => {
 export const checkFaceMissingPerson = asyncHandler (async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   if (!req.files.File1) return next (new Error ('Please upload file.'));
-  let result = await getDescriptorsFromDB(File1);
+  let result = await getDescriptorsFromDB (File1);
   const searchKey = result[0].label;
   if (searchKey == 'unknown')
     return res.json ({success: false, result, missingData: 'unknown'});
-  const reportMissing = await reportMissingPersonsrModel.findOne ({ 
-    labelFaceModel:searchKey
+  const reportMissing = await reportMissingPersonsrModel.findOne ({
+    labelFaceModel: searchKey,
   });
-  if(reportMissing)
-  return res.json ({success: true, result, missingData: reportMissing});
+  if (reportMissing)
+    return res.json ({success: true, result, missingData: reportMissing});
   const reportFound = await volunteerModel.findOne ({
-    labelFaceModel:searchKey,
- });
- if(reportFound)
-  return res.json ({success: true, result, missingData: reportFound});
+    labelFaceModel: searchKey,
+  });
+  if (reportFound)
+    return res.json ({success: true, result, missingData: reportFound});
 });
-
+export const getAllMissingPersons = asyncHandler (async (req, res, next) => {
+  const {page} = req.query;
+  const missingPersons = await reportMissingPersonsrModel
+    .find ({})
+    .paginate (page);
+  if (!missingPersons || missingPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: missingPersons});
+});
+export const getAllFoundPersons = asyncHandler (async (req, res, next) => {
+  const {page} = req.query;
+  const foundPersons = await volunteerModel
+    .find ({})
+    .paginate (page)
+  if (!foundPersons || foundPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: foundPersons});
+});
+export const searchMissingPersonsWithName = asyncHandler (async (req, res, next) => {
+  const {keyword, page} = req.query;
+  const missingPersons = await reportMissingPersonsrModel
+    .find ({
+      fullName: {$regex: keyword, $options: 'i'},
+    })
+    .paginate (page);
+  if (!missingPersons || missingPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: missingPersons});
+});
+export const searchFoundPersonsWithName = asyncHandler (async (req, res, next) => {
+  const {keyword,page} = req.query;
+  const foundPersons = await volunteerModel
+    .find ({
+      fullName: {$regex:keyword, $options: 'i'},
+    })
+    .paginate (page)
+  if (!foundPersons || foundPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: foundPersons});
+});

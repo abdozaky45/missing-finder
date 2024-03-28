@@ -57,6 +57,14 @@ const volunteerSchema = new Schema (
     // Data of the reporting person
     phone: {type: String, min: 0, max: 11, required: true},
   },
-  {timestamps: true}
+  {timestamps: true,strictQuery:true}
 );
+volunteerSchema.query.paginate = function (page) {
+  // this >>>>> query
+  // return query
+  page = !page || page < 1 || isNaN (page) ? 1 : page;
+  const limit = 20;
+  const skip = limit * (page - 1);
+  return this.skip (skip).limit (limit);
+};
 export const volunteerModel = model ('Guset', volunteerSchema);
