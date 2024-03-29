@@ -241,3 +241,31 @@ export const searchFoundPersonsWithName = asyncHandler (async (req, res, next) =
     });
   return res.json ({success: true, page, results: foundPersons});
 });
+export const searchMissingPersonsWithArea = asyncHandler (async (req, res, next) => {
+  const {keyword, page} = req.query;
+  const missingPersons = await reportMissingPersonsrModel
+    .find ({
+      country: {$regex: keyword, $options: 'i'},
+    })
+    .paginate (page);
+  if (!missingPersons || missingPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: missingPersons});
+});
+export const searchFoundPersonsWithArea = asyncHandler (async (req, res, next) => {
+  const {keyword,page} = req.query;
+  const foundPersons = await volunteerModel
+    .find ({
+      country: {$regex:keyword, $options: 'i'},
+    })
+    .paginate (page)
+  if (!foundPersons || foundPersons.length === 0)
+    return res.json ({
+      success: false,
+      message: "'There were no matching search results'",
+    });
+  return res.json ({success: true, page, results: foundPersons});
+});

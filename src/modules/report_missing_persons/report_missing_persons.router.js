@@ -13,7 +13,6 @@ router.post (
   validation (validator.addMissingPerson),
   report_missing_personsController.addMissingFinder
 );
-
 router.post (
   '/addFound',
   auth,
@@ -21,7 +20,6 @@ router.post (
   validation (validator.addFoundPerson),
   report_missing_personsController.addFoundPerson
 );
-
 router.post (
   '/foundPersons/check-fac',
   auth,
@@ -49,12 +47,25 @@ router.post (
   validation (validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchMissingPersonsWithName
 );
-
 router.post (
   '/foundPersons/all',
   auth,
   autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchFoundPersonsWithName
+);
+router.post (
+  '/getAllMissingPersonsWithArea',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidation),
+  report_missing_personsController.searchMissingPersonsWithArea
+);
+router.post (
+  '/getAllFoundPersonsWithArea',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidation),
+  report_missing_personsController.searchFoundPersonsWithArea
 );
 export default router;
