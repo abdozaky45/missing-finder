@@ -51,9 +51,11 @@ const userSchema = new Schema(
       default: "user"
     },
     forgetCode: String,
+    codeDeleteAccount:String,
     activationCode: String,
     createdCodeActivateAccount: Date,
-    createdCodeResetPassword: Date
+    createdCodeResetPassword: Date,
+    createdCodeDeleteAccount: Date
   },
   { timestamps: true }
 );
