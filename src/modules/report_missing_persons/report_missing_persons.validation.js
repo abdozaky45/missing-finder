@@ -67,3 +67,15 @@ export const searchMissingAndFoundPersonsValidationWithName = joi
     page: joi.string ().required (),
   })
   .required ();
+  export const searchMissingAndFoundPersonsValidationWithArea = joi
+  .object ({
+    country: joi.string ().required (),
+    page: joi.string ().required (),
+  })
+  .required ();
+  export const searchMissingAndFoundPersonsValidationWithYear = joi
+  .object ({
+    year: joi.string ().required (),
+    page: joi.string ().required (),
+  })
+  .required ();

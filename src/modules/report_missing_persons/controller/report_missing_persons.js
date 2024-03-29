@@ -242,10 +242,10 @@ export const searchFoundPersonsWithName = asyncHandler (async (req, res, next) =
   return res.json ({success: true, page, results: foundPersons});
 });
 export const searchMissingPersonsWithArea = asyncHandler (async (req, res, next) => {
-  const {keyword, page} = req.query;
+  const {country, page} = req.query;
   const missingPersons = await reportMissingPersonsrModel
     .find ({
-      country: {$regex: keyword, $options: 'i'},
+      country: {$regex: country, $options: 'i'},
     })
     .paginate (page);
   if (!missingPersons || missingPersons.length === 0)
@@ -256,10 +256,10 @@ export const searchMissingPersonsWithArea = asyncHandler (async (req, res, next)
   return res.json ({success: true, page, results: missingPersons});
 });
 export const searchFoundPersonsWithArea = asyncHandler (async (req, res, next) => {
-  const {keyword,page} = req.query;
+  const {country,page} = req.query;
   const foundPersons = await volunteerModel
     .find ({
-      country: {$regex:keyword, $options: 'i'},
+      country: {$regex:country, $options: 'i'},
     })
     .paginate (page)
   if (!foundPersons || foundPersons.length === 0)
@@ -268,4 +268,79 @@ export const searchFoundPersonsWithArea = asyncHandler (async (req, res, next) =
       message: "'There were no matching search results'",
     });
   return res.json ({success: true, page, results: foundPersons});
+});
+export const searchMissingPersonsWithMissingSince = asyncHandler (async (req, res, next) => {
+  const {year,page} = req.query;
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
+  const missingPersons = await reportMissingPersonsrModel
+    .find ({
+      dateOfLoss: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    })
+    .paginate (page)
+  if (missingPersons.length > 0){
+    return res.json ({
+      success: true,
+      message: "Users lost in a year",
+      results:missingPersons
+    });
+  }else{
+    const availableMonths = await reportMissingPersonsrModel.distinct('dateOfLoss.month', {
+      'dateOfLoss.year': year
+    }).paginate (page)
+    if (availableMonths.length > 0) {
+      return res.json ({
+        success: true,
+        message: "Available months in the selected year",
+        results:availableMonths
+      });
+    }else{
+      return res.json ({
+        success: false,
+        message: "There are no results for this year",
+        results:availableMonths
+      });
+    }
+  }
+  
+});
+export const searchFoundPersonsWithMissingSince = asyncHandler (async (req, res, next) => {
+  const {year,page} = req.query;
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
+  const missingPersons = await volunteerModel
+    .find ({
+      dateOfLoss: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    })
+    .paginate (page)
+  if (missingPersons.length > 0){
+    return res.json ({
+      success: true,
+      message: "Users lost in a year",
+      results:missingPersons
+    });
+  }else{
+    const availableMonths = await volunteerModel.distinct('dateOfLoss.month', {
+      'dateOfFound.year': year
+    }).paginate (page)
+    if (availableMonths.length > 0) {
+      return res.json ({
+        success: true,
+        message: "Available months in the selected year",
+        results:availableMonths
+      });
+    }else{
+      return res.json ({
+        success: false,
+        message: "There are no results for this year",
+        results:availableMonths
+      });
+    }
+  }
 });

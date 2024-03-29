@@ -58,14 +58,28 @@ router.post (
   '/getAllMissingPersonsWithArea',
   auth,
   autherized ('user'),
-  validation (validator.searchMissingAndFoundPersonsValidation),
+  validation (validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchMissingPersonsWithArea
 );
 router.post (
   '/getAllFoundPersonsWithArea',
   auth,
   autherized ('user'),
-  validation (validator.searchMissingAndFoundPersonsValidation),
+  validation (validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchFoundPersonsWithArea
+);
+router.post (
+  '/getAllMissingPersonsWithYear',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidationWithYear),
+  report_missing_personsController.searchMissingPersonsWithMissingSince
+);
+router.post (
+  '/getAllFoundPersonsWithYear',
+  auth,
+  autherized ('user'),
+  validation (validator.searchMissingAndFoundPersonsValidationWithYear),
+  report_missing_personsController.searchFoundPersonsWithMissingSince
 );
 export default router;
