@@ -507,14 +507,12 @@ export const resendSendCodeDeleteAccount = asyncHandler (
       charset: 'numeric',
     });
     const currentTime = new Date ();
-    const user = await userModel.findByIdAndUpdate (req.user._id,
-      {
-        codeDeleteAccount: code,
-        createdCodeDeleteAccount: currentTime,
-      }
-    );
+    const user = await userModel.findByIdAndUpdate (req.user._id, {
+      codeDeleteAccount: code,
+      createdCodeDeleteAccount: currentTime,
+    });
     if (!user) return next (new Error ('user not found', {cause: 404}));
-    await tokenModel.deleteMany({ user: user._id });
+    await tokenModel.deleteMany ({user: user._id});
     const isSend = await sendEmail ({
       to: user.email,
       subject: 'Enter the email with which you previously created the account!',
