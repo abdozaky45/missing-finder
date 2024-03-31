@@ -26,59 +26,43 @@ router.post (
   autherized ('user'),
   report_missing_personsController.checkFaceMissingPerson
 );
-router.post (
+router.get (
   '/getAllMissingPersons',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidation),
   report_missing_personsController.getAllMissingPersons
 );
-router.post (
+router.get (
   '/getAllFoundPersons',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidation),
   report_missing_personsController.getAllFoundPersons
 );
-router.post (
+router.get (
   '/all',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchMissingPersonsWithName
 );
-router.post (
+router.get (
   '/foundPersons/all',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchFoundPersonsWithName
 );
-router.post (
+router.get (
   '/getAllMissingPersonsWithArea',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchMissingPersonsWithArea
 );
-router.post (
+router.get (
   '/getAllFoundPersonsWithArea',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchFoundPersonsWithArea
 );
-router.post (
+router.get (
   '/getAllMissingPersonsWithYear',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchMissingPersonsWithMissingSince
 );
-router.post (
+router.get (
   '/getAllFoundPersonsWithYear',
-  auth,
-  autherized ('user'),
   validation (validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchFoundPersonsWithMissingSince
 );
