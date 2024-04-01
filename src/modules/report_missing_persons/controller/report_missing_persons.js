@@ -15,7 +15,6 @@ import slugify from 'slugify';
 import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 async function LoadModels() {
   await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/models");
   await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/models");
@@ -129,7 +128,6 @@ export const addMissingFinder = asyncHandler(async (req, res, next) => {
     });
   }
 });
-
 export const addFoundPerson = asyncHandler(async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   const File2 = req.files.File2.tempFilePath;
@@ -155,7 +153,7 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
     image: { secure_url, public_id },
     labelFaceModel: label,
     fullName: label1,
-    dateOfLoss: Date.now(),
+    dateOfFound: Date.now(),
     ...req.body,
   });
   const id = reportMiss._id;
@@ -170,7 +168,6 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
     });
   }
 });
-
 export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
   const File1 = req.files.File1.tempFilePath;
   if (!req.files.File1) return next(new Error('Please upload file.'));
@@ -182,12 +179,12 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     labelFaceModel: searchKey,
   });
   if (reportMissing)
-    return res.json({ success: true, result, missingData: reportMissing });
+    return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
   const reportFound = await volunteerModel.findOne({
     labelFaceModel: searchKey,
   });
   if (reportFound)
-    return res.json({ success: true, result, missingData: reportFound });
+    return res.json({ success: true, result, keyRes: "foundPersons", missingData: reportFound });
 });
 export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
@@ -344,4 +341,3 @@ export const searchFoundPersonsWithMissingSince = asyncHandler(async (req, res, 
     }
   }
 });
- 

@@ -41,7 +41,7 @@ const volunteerSchema = new Schema (
       enum: ['healthy', 'sick', 'SpecialNeeds'],
       required: true,
     },
-    dateOfLoss: {
+    dateOfFound: {     
       type: Date,
       required: true
     },
