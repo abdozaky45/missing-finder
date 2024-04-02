@@ -184,7 +184,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     labelFaceModel: searchKey,
   });
   if (reportFound)
-    return res.json({ success: true, result, keyRes: "foundPersons", missingData: reportFound });
+    return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
 });
 export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
