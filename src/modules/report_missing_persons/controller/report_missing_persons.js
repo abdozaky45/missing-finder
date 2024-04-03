@@ -96,10 +96,17 @@ export const addMissingFinder = asyncHandler(async (req, res, next) => {
   const label1 = req.body.label1;
   if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
     return next(new Error('Please upload all three files.', { casue: 400 }));
-  const { secure_url, public_id } = await cloudinary.uploader.upload(
-    req.files.File1.tempFilePath,
-    { folder: `missingPersons` }
-  );
+  const uploadPromises = [
+    cloudinary.uploader.upload(File1, { folder: `missingPersons` }),
+    cloudinary.uploader.upload(File2, { folder: `missingPersons` }),
+    cloudinary.uploader.upload(File3, { folder: `missingPersons` })
+  ];
+  const uploadResults = await Promise.all(uploadPromises);
+  const images = uploadResults.map(result => ({
+    secure_url: result.secure_url,
+    public_id: result.public_id
+  }));
+
   const uniqueNumber = Randomstring.generate({
     length: 1,
     charset: 'numeric',
@@ -111,7 +118,7 @@ export const addMissingFinder = asyncHandler(async (req, res, next) => {
   const label = slugify(`${label1}-${uniqueNumber}${Alphabetic}`);
   const reportMiss = await reportMissingPersonsrModel.create({
     userId: req.user.id,
-    image: { secure_url, public_id },
+    images: images,
     labelFaceModel: label,
     fullName: label1,
     ...req.body,
@@ -135,10 +142,16 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
   const label1 = req.body.label1;
   if (!req.files || !req.files.File1 || !req.files.File2 || !req.files.File3)
     return next(new Error('Please upload all three files.', { casue: 400 }));
-  const { secure_url, public_id } = await cloudinary.uploader.upload(
-    req.files.File1.tempFilePath,
-    { folder: `foundPerson` }
-  );
+  const uploadPromises = [
+    cloudinary.uploader.upload(File1, { folder: `missingPersons` }),
+    cloudinary.uploader.upload(File2, { folder: `missingPersons` }),
+    cloudinary.uploader.upload(File3, { folder: `missingPersons` })
+  ];
+  const uploadResults = await Promise.all(uploadPromises);
+  const images = uploadResults.map(result => ({
+    secure_url: result.secure_url,
+    public_id: result.public_id
+  }));
   const uniqueNumber = Randomstring.generate({
     length: 1,
     charset: 'numeric',
@@ -150,7 +163,7 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
   const label = slugify(`${label1}-${uniqueNumber}${Alphabetic}`);
   const reportMiss = await volunteerModel.create({
     userId: req.user.id,
-    image: { secure_url, public_id },
+    images: images,
     labelFaceModel: label,
     fullName: label1,
     dateOfFound: Date.now(),
