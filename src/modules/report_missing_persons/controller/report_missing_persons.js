@@ -192,7 +192,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     labelFaceModel: searchKey,
   }).populate({
     path: 'userId',
-    select: 'userName email -_id', 
+    select: 'userName email -_id',
   });
   if (reportMissing)
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
@@ -200,7 +200,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     labelFaceModel: searchKey,
   }).populate({
     path: 'userId',
-    select: 'userName email -_id', 
+    select: 'userName email -_id',
   });
   if (reportFound)
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
@@ -209,6 +209,11 @@ export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
   const missingPersons = await reportMissingPersonsrModel
     .find({})
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (!missingPersons || missingPersons.length === 0)
     return res.json({
@@ -221,7 +226,12 @@ export const getAllFoundPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
   const foundPersons = await volunteerModel
     .find({})
-    .paginate(page)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .sort({ createdAt: -1 })
+    .paginate(page);
   if (!foundPersons || foundPersons.length === 0)
     return res.json({
       success: false,
@@ -234,6 +244,10 @@ export const searchMissingPersonsWithName = asyncHandler(async (req, res, next) 
   const missingPersons = await reportMissingPersonsrModel
     .find({
       fullName: { $regex: keyword, $options: 'i' },
+    })
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
     })
     .paginate(page);
   if (!missingPersons || missingPersons.length === 0)
@@ -249,7 +263,11 @@ export const searchFoundPersonsWithName = asyncHandler(async (req, res, next) =>
     .find({
       fullName: { $regex: keyword, $options: 'i' },
     })
-    .paginate(page)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .paginate(page);
   if (!foundPersons || foundPersons.length === 0)
     return res.json({
       success: false,
@@ -262,6 +280,10 @@ export const searchMissingPersonsWithArea = asyncHandler(async (req, res, next) 
   const missingPersons = await reportMissingPersonsrModel
     .find({
       country: { $regex: country, $options: 'i' },
+    })
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
     })
     .paginate(page);
   if (!missingPersons || missingPersons.length === 0)
@@ -277,7 +299,11 @@ export const searchFoundPersonsWithArea = asyncHandler(async (req, res, next) =>
     .find({
       country: { $regex: country, $options: 'i' },
     })
-    .paginate(page)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .paginate(page);
   if (!foundPersons || foundPersons.length === 0)
     return res.json({
       success: false,
@@ -296,7 +322,11 @@ export const searchMissingPersonsWithMissingSince = asyncHandler(async (req, res
         $lte: endDate
       }
     })
-    .paginate(page)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .paginate(page);
   if (missingPersons.length > 0) {
     return res.json({
       success: true,
@@ -334,7 +364,11 @@ export const searchFoundPersonsWithMissingSince = asyncHandler(async (req, res, 
         $lte: endDate
       }
     })
-    .paginate(page)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    })
+    .paginate(page);
   if (missingPersons.length > 0) {
     return res.json({
       success: true,
