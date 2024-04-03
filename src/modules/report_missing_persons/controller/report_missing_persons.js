@@ -190,11 +190,17 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     return res.json({ success: false, result, missingData: 'unknown' });
   const reportMissing = await reportMissingPersonsrModel.findOne({
     labelFaceModel: searchKey,
+  }).populate({
+    path: 'userId',
+    select: 'userName email -_id', 
   });
   if (reportMissing)
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
   const reportFound = await volunteerModel.findOne({
     labelFaceModel: searchKey,
+  }).populate({
+    path: 'userId',
+    select: 'userName email -_id', 
   });
   if (reportFound)
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
