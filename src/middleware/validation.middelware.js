@@ -10,7 +10,7 @@ export const validation = (joiSchema) => {
         const validationResult = joiSchema.validate(allDataAllMethods, { abortEarly: false });
         if (validationResult.error) {
             const MessageError = validationResult.error.details;
-            return res.json({ Message: "validationError!", MessageError });
+            return res.status(401).json({ Message: "validationError!", MessageError });
         }
         return next();
     }
