@@ -249,6 +249,7 @@ export const searchMissingPersonsWithName = asyncHandler(async (req, res, next) 
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (!missingPersons || missingPersons.length === 0)
     return res.json({
@@ -267,6 +268,7 @@ export const searchFoundPersonsWithName = asyncHandler(async (req, res, next) =>
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (!foundPersons || foundPersons.length === 0)
     return res.json({
@@ -285,6 +287,7 @@ export const searchMissingPersonsWithArea = asyncHandler(async (req, res, next) 
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (!missingPersons || missingPersons.length === 0)
     return res.json({
@@ -303,6 +306,7 @@ export const searchFoundPersonsWithArea = asyncHandler(async (req, res, next) =>
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (!foundPersons || foundPersons.length === 0)
     return res.json({
@@ -326,6 +330,7 @@ export const searchMissingPersonsWithMissingSince = asyncHandler(async (req, res
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (missingPersons.length > 0) {
     return res.json({
@@ -368,6 +373,7 @@ export const searchFoundPersonsWithMissingSince = asyncHandler(async (req, res, 
       path: 'userId',
       select: 'userName email -_id',
     })
+    .sort({ createdAt: -1 })
     .paginate(page);
   if (missingPersons.length > 0) {
     return res.json({
