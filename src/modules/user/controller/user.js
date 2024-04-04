@@ -9,6 +9,7 @@ import faceModel from "../../../../DB/models/face.model.js";
 import { volunteerModel } from "../../../../DB/models/volunteer.model.js";
 import { reportMissingPersonsrModel } from "../../../../DB/models/report_missing_persons.model.js";
 import { compare } from "../../../utils/HashAndCompare.js";
+import cloudinary from "../../../utils/cloudinary.js";
 export const users = asyncHandler(async (req, res, next) => {
   const user = await userModel
     .find({})
