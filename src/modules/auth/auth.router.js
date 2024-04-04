@@ -2,8 +2,6 @@ import {Router} from 'express';
 import * as authController from './controller/auth.js';
 import {validation} from '../../middleware/validation.middelware.js';
 import * as validator from './auth.validation.js';
-import {autherized} from '../../middleware/authorization.middleware.js';
-import {auth} from '../../middleware/authentication .middleware.js';
 const router = Router ();
 // register
 router.post (
@@ -76,31 +74,5 @@ router.patch (
   validation (validator.resetPasswordPhoneSchema),
   authController.resetPasswordWithPhone
 );
-router.patch (
-  '/changePass',
-  auth,
-  autherized ('user'),
-  validation (validator.changePassword),
-  authController.changePassword
-);
-router.patch (
-  '/sendCodeDeleteAccount',
-  auth,
-  autherized ('user'),
-  validation (validator.sendCodeDeleteAccount),
-  authController.sendCodeDeleteAccount
-);
-router.patch (
-  '/deleteAccount',
-  auth,
-  autherized ('user'),
-  validation (validator.deleteAccount),
-  authController.deleteAccount
-);
-router.patch (
-  '/resendCodeDeleteAccount',
-  auth,
-  autherized ('user'),
-  authController.resendSendCodeDeleteAccount
-);
+
 export default router;
