@@ -5,6 +5,10 @@ import bcrypt from 'bcryptjs';
 import Randomstring from 'randomstring';
 import sendEmail from "../../../utils/sendEmail.js";
 import { tempResetPassword } from "../../../utils/html.js";
+import faceModel from "../../../../DB/models/face.model.js";
+import { volunteerModel } from "../../../../DB/models/volunteer.model.js";
+import { reportMissingPersonsrModel } from "../../../../DB/models/report_missing_persons.model.js";
+import { compare } from "../../../utils/HashAndCompare.js";
 export const users = asyncHandler(async (req, res, next) => {
   const user = await userModel
     .find({})
@@ -15,11 +19,10 @@ export const users = asyncHandler(async (req, res, next) => {
 });
 export const deleteUser = asyncHandler(async (req, res, next) => {
   const user = await userModel.findById(req.params._id);
-  if(!user) return next(new Error("In-valid userId!"))
+  if (!user) return next(new Error("In-valid userId!"))
   await userModel.findByIdAndDelete(req.params._id);
   return res.json({ success: true, Message: "deleted user" });
 });
-
 export const changePassword = asyncHandler(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const user = await userModel.findById(req.user._id);
@@ -42,7 +45,7 @@ export const changePassword = asyncHandler(async (req, res, next) => {
   });
 });
 export const sendCodeDeleteAccount = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
   const user = await userModel.findOne({ email });
   if (!user)
     return next(
@@ -51,6 +54,8 @@ export const sendCodeDeleteAccount = asyncHandler(async (req, res, next) => {
         { cause: 400 }
       )
     );
+  if (!compare({ plaintext: password, hashValue: user.password }))
+    return next(new Error('In-valid Email Or Password', { cause: 400 }));
   const code = Randomstring.generate({
     length: 4,
     charset: 'numeric',
@@ -80,7 +85,24 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
     const codeCreationTime = codeDocument.createdCodeDeleteAccount;
     const timeDifference = currentTime - codeCreationTime;
     if (timeDifference <= validityDuration) {
-      await userModel.findByIdAndDelete(req.user._id);
+      const gusets = await volunteerModel.findOne({ userId: codeDocument._id });
+      if (gusets) {
+        for (const image of gusets.images) {
+          await cloudinary.uploader.destroy(image.public_id);
+        }
+        await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
+        await volunteerModel.deleteMany({ _id: gusets._id });
+      }
+      const reporter = await reportMissingPersonsrModel.findOne({ userId: codeDocument._id });
+      if (reporter) {
+        for (const image of reporter.images) {
+          await cloudinary.uploader.destroy(image.public_id);
+        }
+        await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
+        await reportMissingPersonsrModel.deleteMany({ _id: reporter._id });
+      }
+      await tokenModel.findOneAndDelete({ user: codeDocument._id });
+      await userModel.findByIdAndDelete(codeDocument._id);
       return res.json({
         success: true,
         Message: 'The account has been deleted successfully',

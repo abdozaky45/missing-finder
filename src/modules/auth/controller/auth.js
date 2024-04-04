@@ -8,6 +8,7 @@ import { TempConfirmationEmail, tempResetPassword } from '../../../utils/html.js
 import jwk from 'jsonwebtoken';
 import tokenModel from '../../../../DB/models/token.model.js';
 import { sendSMS } from '../../../utils/sendSMS.js';
+import { compare } from '../../../utils/HashAndCompare.js';
 export const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, password, gender, dateOfBirth } = req.body;
   // existence
@@ -220,8 +221,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
     return next(new Error('unactivated account!', { cause: 400 }));
   }
-  const comparePassword = bcrypt.compareSync(password, user.password);
-  if (!comparePassword)
+  if (!compare({ plaintext: password, hashValue: user.password }))
     return next(new Error('In-valid Email Or Password', { cause: 400 }));
   const token = jwk.sign(
     { id: user._id, userName: user.userName, email: user.email },

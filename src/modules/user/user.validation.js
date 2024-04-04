@@ -12,6 +12,7 @@ export const changePassword = joi
 export const sendCodeDeleteAccount = joi
     .object({
         email: joi.string().required(),
+        password: joi.string().required()
     })
     .required();
 export const deleteAccount = joi
