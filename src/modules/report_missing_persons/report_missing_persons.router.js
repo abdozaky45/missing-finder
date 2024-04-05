@@ -26,6 +26,7 @@ router.post (
   autherized ('user'),
   report_missing_personsController.checkFaceMissingPerson
 );
+router.post("/deleteReport/:_id",report_missing_personsController.deleteReport)
 router.get (
   '/getAllMissingPersons',
   validation (validator.searchMissingAndFoundPersonsValidation),

@@ -400,3 +400,34 @@ export const searchFoundPersonsWithMissingSince = asyncHandler(async (req, res, 
     }
   }
 });
+export const deleteReport = asyncHandler(async (req, res, next) => {
+  const { _id } = req.params;
+      const gusets = await volunteerModel.findById(_id);
+      if (gusets) {
+        for (const image of gusets.images) {
+          await cloudinary.uploader.destroy(image.public_id);
+          return res.json({
+            success: true,
+            Message: 'The report has been deleted successfully',
+          });
+        }
+        await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
+        await volunteerModel.deleteMany({ _id: gusets._id });
+      }
+      const reporter = await reportMissingPersonsrModel.findById(_id);
+      if (reporter) {
+        for (const image of reporter.images) {
+          await cloudinary.uploader.destroy(image.public_id);
+        }
+        await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
+        await reportMissingPersonsrModel.deleteMany({ _id: reporter._id });
+        return res.json({
+          success: true,
+          Message: 'The report has been deleted successfully',
+        });
+      }
+      return res.json({
+        success: false,
+        Message: 'In-valid Id volunteer Or Reporter!',
+      });
+});
