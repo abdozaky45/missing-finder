@@ -8,7 +8,7 @@ import { TempConfirmationEmail, tempResetPassword } from '../../../utils/html.js
 import jwk from 'jsonwebtoken';
 import tokenModel from '../../../../DB/models/token.model.js';
 import { sendSMS } from '../../../utils/sendSMS.js';
-import { compare } from '../../../utils/HashAndCompare.js';
+import { compare, hash } from '../../../utils/HashAndCompare.js';
 export const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, password, gender, dateOfBirth } = req.body;
   // existence
@@ -27,10 +27,7 @@ export const register = asyncHandler(async (req, res, next) => {
   // );
 
   //hash password
-  const hashPasword = bcrypt.hashSync(
-    password,
-    parseInt(process.env.SALT_ROUND)
-  );
+  const hashPasword = hash({ plaintext: password });
   const code = Randomstring.generate({
     length: 4,
     charset: 'numeric',
@@ -332,7 +329,7 @@ export const ResetPasswordWithEmail = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email });
   if (!user) return next(new Error('In-valid Email', { cause: 400 }));
-  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUND));
+  user.password = hash({ plaintext: password });
   await user.save();
   const tokens = await tokenModel.find({ user: user._id });
   tokens.forEach(async token => {
@@ -417,7 +414,7 @@ export const resetPasswordWithPhone = asyncHandler(async (req, res, next) => {
   const { phone, password } = req.body;
   const user = await userModel.findOne({ phone });
   if (!user) return next(new Error('In-valid phone', { cause: 400 }));
-  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUND));
+  user.password = hash({ plaintext: password });
   await user.save();
   const tokens = await tokenModel.find({ user: user._id });
   tokens.forEach(async token => {

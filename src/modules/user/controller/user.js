@@ -8,13 +8,13 @@ import { tempResetPassword } from "../../../utils/html.js";
 import faceModel from "../../../../DB/models/face.model.js";
 import { volunteerModel } from "../../../../DB/models/volunteer.model.js";
 import { reportMissingPersonsrModel } from "../../../../DB/models/report_missing_persons.model.js";
-import { compare } from "../../../utils/HashAndCompare.js";
+import { compare, hash } from "../../../utils/HashAndCompare.js";
 import cloudinary from "../../../utils/cloudinary.js";
 export const users = asyncHandler(async (req, res, next) => {
   const user = await userModel
     .find({})
     .select(
-      "firstName lastName email phone password gender personalIdCard dateOfBirth"
+      "firstName lastName email password gender  dateOfBirth"
     );
   return res.json({ success: true, result: user });
 });
@@ -27,13 +27,9 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
 export const changePassword = asyncHandler(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const user = await userModel.findById(req.user._id);
-  const comparePassword = bcrypt.compareSync(currentPassword, user.password);
-  if (!comparePassword)
+  if (!compare({ plaintext: currentPassword, hashValue: user.password }))
     return next(new Error('In-valid Password', { cause: 400 }));
-  user.password = bcrypt.hashSync(
-    newPassword,
-    parseInt(process.env.SALT_ROUND)
-  );
+  user.password = hash({ plaintext: newPassword });
   await user.save();
   const tokens = await tokenModel.find({ user: user._id });
   tokens.forEach(async token => {
