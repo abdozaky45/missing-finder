@@ -21,7 +21,7 @@ router.patch(
     validation(validator.sendCodeDeleteAccount),
     userController.sendCodeDeleteAccount
 );
-router.delete(
+router.post(
     '/deleteAccount',
     auth,
     autherized('user'),

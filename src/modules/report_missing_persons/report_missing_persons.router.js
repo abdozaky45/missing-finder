@@ -1,70 +1,70 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import * as report_missing_personsController
   from './controller/report_missing_persons.js';
-import {auth} from '../../middleware/authentication .middleware.js';
-import {autherized} from '../../middleware/authorization.middleware.js';
-import {validation} from '../../middleware/validation.middelware.js';
+import { auth } from '../../middleware/authentication .middleware.js';
+import { autherized } from '../../middleware/authorization.middleware.js';
+import { validation } from '../../middleware/validation.middelware.js';
 import * as validator from './report_missing_persons.validation.js';
-const router = Router ();
-router.post (
+const router = Router();
+router.post(
   '/addFinder',
   auth,
-  autherized ('user'),
-  validation (validator.addMissingPerson),
+  autherized('user'),
+  validation(validator.addMissingPerson),
   report_missing_personsController.addMissingFinder
 );
-router.post (
+router.post(
   '/addFound',
   auth,
-  autherized ('user'),
-  validation (validator.addFoundPerson),
+  autherized('user'),
+  validation(validator.addFoundPerson),
   report_missing_personsController.addFoundPerson
 );
-router.post (
+router.post(
   '/foundPersons/check-fac',
   auth,
-  autherized ('user'),
+  autherized('user'),
   report_missing_personsController.checkFaceMissingPerson
 );
-router.delete("/deleteReport/:_id",report_missing_personsController.deleteReport)
-router.get (
+router.delete("/deleteReport/:_id", report_missing_personsController.deleteReport);
+router.get(
   '/getAllMissingPersons',
-  validation (validator.searchMissingAndFoundPersonsValidation),
+  validation(validator.searchMissingAndFoundPersonsValidation),
   report_missing_personsController.getAllMissingPersons
 );
-router.get (
+router.get(
   '/getAllFoundPersons',
-  validation (validator.searchMissingAndFoundPersonsValidation),
+  validation(validator.searchMissingAndFoundPersonsValidation),
   report_missing_personsController.getAllFoundPersons
 );
-router.get (
+router.get(
   '/all',
-  validation (validator.searchMissingAndFoundPersonsValidationWithName),
+  validation(validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchMissingPersonsWithName
 );
-router.get (
+router.get(
   '/foundPersons/all',
-  validation (validator.searchMissingAndFoundPersonsValidationWithName),
+  validation(validator.searchMissingAndFoundPersonsValidationWithName),
   report_missing_personsController.searchFoundPersonsWithName
 );
-router.get (
+router.get(
   '/getAllMissingPersonsWithArea',
-  validation (validator.searchMissingAndFoundPersonsValidationWithArea),
+  validation(validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchMissingPersonsWithArea
 );
-router.get (
+router.get(
   '/getAllFoundPersonsWithArea',
-  validation (validator.searchMissingAndFoundPersonsValidationWithArea),
+  validation(validator.searchMissingAndFoundPersonsValidationWithArea),
   report_missing_personsController.searchFoundPersonsWithArea
 );
-router.get (
+router.get(
   '/getAllMissingPersonsWithYear',
-  validation (validator.searchMissingAndFoundPersonsValidationWithYear),
+  validation(validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchMissingPersonsWithMissingSince
 );
-router.get (
+router.get(
   '/getAllFoundPersonsWithYear',
-  validation (validator.searchMissingAndFoundPersonsValidationWithYear),
+  validation(validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchFoundPersonsWithMissingSince
 );
 export default router;
