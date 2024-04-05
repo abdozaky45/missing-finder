@@ -102,7 +102,7 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
         await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
         await reportMissingPersonsrModel.deleteMany({ _id: reporter._id });
       }
-      await tokenModel.findOneAndDelete({ user: codeDocument._id });
+      await tokenModel.deleteMany({ user: codeDocument._id });
       await userModel.findByIdAndDelete(codeDocument._id);
       return res.json({
         success: true,
