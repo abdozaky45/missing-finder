@@ -434,12 +434,20 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
 export const getSingleMissingPerson = asyncHandler(async (req, res, next) => {
   const reporter = await reportMissingPersonsrModel.findById(req.params.reportId);
   if (!reporter) return next(new Error("In-valid Id!", { cause: 400 }));
-  const reportMissingPerson = await reportMissingPersonsrModel.findById(req.params.reportId);
+  const reportMissingPerson = await reportMissingPersonsrModel.findById(req.params.reportId)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    });
   return res.json({ success: true, result: reportMissingPerson });
 });
 export const getSingleFoundPerson = asyncHandler(async (req, res, next) => {
   const reporter = await volunteerModel.findById(req.params.reportId);
   if (!reporter) return next(new Error("In-valid Id!", { cause: 400 }));
-  const reportFoundPerson = await volunteerModel.findById(req.params.reportId);
+  const reportFoundPerson = await volunteerModel.findById(req.params.reportId)
+    .populate({
+      path: 'userId',
+      select: 'userName email -_id',
+    });
   return res.json({ success: true, result: reportFoundPerson });
 });
