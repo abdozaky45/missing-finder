@@ -33,9 +33,19 @@ router.get(
   report_missing_personsController.getAllMissingPersons
 );
 router.get(
+  "/getAllMissingPersons/:reportId",
+  validation(validator.getSingleMissingPersonAndFoundPerson),
+  report_missing_personsController.getSingleMissingPerson
+);
+router.get(
   '/getAllFoundPersons',
   validation(validator.searchMissingAndFoundPersonsValidation),
   report_missing_personsController.getAllFoundPersons
+);
+router.get(
+  "/getAllFoundPersons/:reportId",
+  validation(validator.getSingleMissingPersonAndFoundPerson),
+  report_missing_personsController.getSingleFoundPerson
 );
 router.get(
   '/all',
