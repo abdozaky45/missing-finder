@@ -15,7 +15,7 @@ export const registerSchema = joi
       .required (),
     password: joi
       .string ()
-      .pattern (RegExp ('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])'))
+      .pattern (RegExp ('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%^&*])'))
       .required (),
     confirmPassword: joi.string ().valid (joi.ref ('password')).required (),
     dateOfBirth: joi.date ().required (),
