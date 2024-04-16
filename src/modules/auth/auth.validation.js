@@ -122,4 +122,3 @@ export const resetPasswordPhoneSchema = joi
     confirmPassword: joi.string().valid(joi.ref('password')).required(),
   })
   .required();
-
