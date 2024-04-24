@@ -412,7 +412,7 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
       });
     }
     await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
-    await volunteerModel.deleteMany({ _id: gusets._id });
+    await volunteerModel.findByIdAndDelete(_id);
   }
   const reporter = await reportMissingPersonsrModel.findById(_id);
   if (reporter) {
@@ -420,7 +420,7 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
       await cloudinary.uploader.destroy(image.public_id);
     }
     await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
-    await reportMissingPersonsrModel.deleteMany({ _id: reporter._id });
+    await reportMissingPersonsrModel.findByIdAndDelete(_id );
     return res.json({
       success: true,
       Message: 'The report has been deleted successfully',
