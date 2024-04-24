@@ -406,13 +406,13 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
   if (gusets) {
     for (const image of gusets.images) {
       await cloudinary.uploader.destroy(image.public_id);
-      return res.json({
-        success: true,
-        Message: 'The report has been deleted successfully',
-      });
     }
     await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
     await volunteerModel.findByIdAndDelete(_id);
+    return res.json({
+      success: true,
+      Message: 'The report has been deleted successfully',
+    });
   }
   const reporter = await reportMissingPersonsrModel.findById(_id);
   if (reporter) {
@@ -420,7 +420,7 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
       await cloudinary.uploader.destroy(image.public_id);
     }
     await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
-    await reportMissingPersonsrModel.findByIdAndDelete(_id );
+    await reportMissingPersonsrModel.findByIdAndDelete(_id);
     return res.json({
       success: true,
       Message: 'The report has been deleted successfully',
@@ -431,6 +431,7 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
     Message: 'In-valid Id volunteer Or Reporter!',
   });
 });
+
 export const getSingleMissingPerson = asyncHandler(async (req, res, next) => {
   const reporter = await reportMissingPersonsrModel.findById(req.params.reportId);
   if (!reporter) return next(new Error("In-valid Id!", { cause: 400 }));
