@@ -88,7 +88,7 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
           await cloudinary.uploader.destroy(image.public_id);
         }
         await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
-        await volunteerModel.deleteMany({ _id: gusets._id });
+        await volunteerModel.findByIdAndDelete(gusets._id);
       }
       const reporter = await reportMissingPersonsrModel.findOne({ userId: codeDocument._id });
       if (reporter) {
@@ -96,7 +96,7 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
           await cloudinary.uploader.destroy(image.public_id);
         }
         await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
-        await reportMissingPersonsrModel.deleteMany({ _id: reporter._id });
+        await reportMissingPersonsrModel.findByIdAndDelete(reporter._id );
       }
       await tokenModel.deleteMany({ user: codeDocument._id });
       await userModel.findByIdAndDelete(codeDocument._id);
