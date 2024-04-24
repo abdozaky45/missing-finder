@@ -83,6 +83,7 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
     const timeDifference = currentTime - codeCreationTime;
     if (timeDifference <= validityDuration) {
       const gusets = await volunteerModel.findOne({ userId: codeDocument._id });
+      // volunteer
       if (gusets) {
         for (const image of gusets.images) {
           await cloudinary.uploader.destroy(image.public_id);
@@ -91,12 +92,13 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
         await volunteerModel.findByIdAndDelete(gusets._id);
       }
       const reporter = await reportMissingPersonsrModel.findOne({ userId: codeDocument._id });
+      // reporter 
       if (reporter) {
         for (const image of reporter.images) {
           await cloudinary.uploader.destroy(image.public_id);
         }
         await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
-        await reportMissingPersonsrModel.findByIdAndDelete(reporter._id );
+        await reportMissingPersonsrModel.findByIdAndDelete(reporter._id);
       }
       await tokenModel.deleteMany({ user: codeDocument._id });
       await userModel.findByIdAndDelete(codeDocument._id);
