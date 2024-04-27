@@ -166,7 +166,7 @@ export const addFoundPerson = asyncHandler(async (req, res, next) => {
     images: images,
     labelFaceModel: label,
     fullName: label1,
-    dateOfFound: Date.now(),
+    dateOfLoss: Date.now(),
     ...req.body,
   });
   const id = reportMiss._id;
@@ -199,6 +199,21 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
   const reportFound = await volunteerModel.findOne({
     labelFaceModel: searchKey,
   }).populate({
+    path: 'userId',
+    select: 'userName email -_id',
+  });
+  if (reportFound)
+    return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
+});
+export const showMoreCheckFace = asyncHandler(async(req,res,next)=>{
+  const {_id} = req.params;
+  const reportMissing = await reportMissingPersonsrModel.findById(_id).populate({
+    path: 'userId',
+    select: 'userName email -_id',
+  });
+  if (reportMissing)
+    return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
+  const reportFound = await volunteerModel.findById(_id).populate({
     path: 'userId',
     select: 'userName email -_id',
   });

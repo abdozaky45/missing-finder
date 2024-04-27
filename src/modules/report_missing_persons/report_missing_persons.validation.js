@@ -56,6 +56,10 @@ export const addFoundPerson = joi
     phone: joi.string().min(0).max(11).required(),
   })
   .required();
+export const showMoreCheckFace = joi.object({
+  _id: joi.string().required()
+})
+  .required();
 export const searchMissingAndFoundPersonsValidation = joi
   .object({
     page: joi.string().required(),
