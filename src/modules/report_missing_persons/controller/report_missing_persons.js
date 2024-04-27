@@ -205,20 +205,20 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
   if (reportFound)
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
 });
-export const showMoreCheckFace = asyncHandler(async(req,res,next)=>{
-  const {_id} = req.params;
+export const showMoreCheckFace = asyncHandler(async (req, res, next) => {
+  const { _id } = req.params;
   const reportMissing = await reportMissingPersonsrModel.findById(_id).populate({
     path: 'userId',
     select: 'userName email -_id',
   });
   if (reportMissing)
-    return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
+    return res.json({ success: true, keyRes: "missingPersons", missingData: reportMissing });
   const reportFound = await volunteerModel.findById(_id).populate({
     path: 'userId',
     select: 'userName email -_id',
   });
   if (reportFound)
-    return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
+    return res.json({ success: true, keyRes: "foundPersons", foundData: reportFound });
 });
 export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
