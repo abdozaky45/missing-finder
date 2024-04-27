@@ -218,7 +218,7 @@ export const showMoreCheckFace = asyncHandler(async (req, res, next) => {
     select: 'userName email -_id',
   });
   if (reportFound)
-    return res.json({ success: true, keyRes: "foundPersons", foundData: reportFound });
+    return res.json({ success: true, keyRes: "foundPersons", missingData: reportFound });
 });
 export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
