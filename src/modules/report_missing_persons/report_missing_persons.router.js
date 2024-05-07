@@ -26,10 +26,6 @@ router.post(
   autherized('user'),
   report_missing_personsController.checkFaceMissingPerson
 );
-router.post("/foundPersons/check-fac/:_id",
-  validation(validator.showMoreCheckFace),
-  report_missing_personsController.showMoreCheckFace
-);
 router.delete("/deleteReport/:_id", report_missing_personsController.deleteReport);
 router.get(
   '/getAllMissingPersons',
