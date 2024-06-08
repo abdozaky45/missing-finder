@@ -79,4 +79,11 @@ router.get(
   report_missing_personsController.searchFoundPersonsWithMissingSince
 );
 router.get("/matching/users", report_missing_personsController.getAllMatching);
+router.delete(
+  "/deleteMatching/:_id",
+  auth,
+  autherized('user'),
+  validation(validator.deleteMatching),
+  report_missing_personsController.deleteMatching
+);
 export default router;

@@ -86,3 +86,6 @@ export const searchMissingAndFoundPersonsValidationWithYear = joi
 export const getSingleMissingPersonAndFoundPerson = joi.object({
   reportId: joi.string().required()
 }).required();
+export const deleteMatching = joi.object({
+  _id: joi.string().required()
+}).required();
