@@ -13,6 +13,7 @@ import {
 } from '../../../../DB/models/report_missing_persons.model.js';
 import slugify from 'slugify';
 import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
+import { checkFaceModel } from '../../../../DB/models/check_face.model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 async function LoadModels() {
@@ -194,16 +195,30 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     path: 'userId',
     select: 'userName email -_id',
   });
-  if (reportMissing)
+  if (reportMissing) {
+    const { public_id, secure_url } = await cloudinary.uploader.upload(File1, { folder: `missingPersons` });
+    const checkFace = await checkFaceModel.create({
+      checkFaceimage: { public_id, secure_url },
+      userId: req.user._id,
+      reportMissingPersonId: reportMissing._id
+    });
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
+  }
   const reportFound = await volunteerModel.findOne({
     labelFaceModel: searchKey,
   }).populate({
     path: 'userId',
     select: 'userName email -_id',
   });
-  if (reportFound)
+  if (reportFound){
+    const { public_id, secure_url } = await cloudinary.uploader.upload(File1, { folder: `missingPersons` });
+    const checkFace = await checkFaceModel.create({
+      checkFaceimage: { public_id, secure_url },
+      userId: req.user._id,
+      volunteerId: reportFound._id
+    });
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
+  }
 });
 export const getAllMissingPersons = asyncHandler(async (req, res, next) => {
   const { page } = req.query;
