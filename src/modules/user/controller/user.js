@@ -83,11 +83,6 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
     const codeCreationTime = codeDocument.createdCodeDeleteAccount;
     const timeDifference = currentTime - codeCreationTime;
     if (timeDifference <= validityDuration) {
-      const checkFace = checkFaceModel.findOne({ userId: codeDocument._id })
-      if (checkFace) {
-        await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
-        await checkFaceModel.findByIdAndDelete(checkFace._id)
-      }
       const gusets = await volunteerModel.findOne({ userId: codeDocument._id });
       // volunteer
       if (gusets) {

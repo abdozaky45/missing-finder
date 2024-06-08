@@ -424,10 +424,41 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
     }
     await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
     await volunteerModel.findByIdAndDelete(_id);
-    const checkFace = await checkFaceModel.findOne({volunteerId:_id});
-    if(checkFace){
-    await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
-    await checkFaceModel.findByIdAndDelete(checkFace._id);
+    return res.json({
+      success: true,
+      Message: 'The report has been deleted successfully',
+    });
+  }
+  const reporter = await reportMissingPersonsrModel.findById(_id);
+  if (reporter) {
+    for (const image of reporter.images) {
+      await cloudinary.uploader.destroy(image.public_id);
+    }
+    await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
+    await reportMissingPersonsrModel.findByIdAndDelete(_id);
+    return res.json({
+      success: true,
+      Message: 'The report has been deleted successfully',
+    });
+  }
+  return res.json({
+    success: false,
+    Message: 'In-valid Id volunteer Or Reporter!',
+  });
+});
+export const deleteReportMatching = asyncHandler(async (req, res, next) => {
+  const { _id } = req.params;
+  const gusets = await volunteerModel.findById(_id);
+  if (gusets) {
+    for (const image of gusets.images) {
+      await cloudinary.uploader.destroy(image.public_id);
+    }
+    await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
+    await volunteerModel.findByIdAndDelete(_id);
+    const checkFace = await checkFaceModel.findOne({ volunteerId: _id });
+    if (checkFace) {
+      await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
+      await checkFaceModel.findByIdAndDelete(checkFace._id);
     }
     return res.json({
       success: true,
@@ -441,10 +472,10 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
     }
     await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
     await reportMissingPersonsrModel.findByIdAndDelete(_id);
-    const checkFace = await checkFaceModel.findOne({reportMissingPersonId:_id});
-    if(checkFace){
-    await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
-    await checkFaceModel.findByIdAndDelete(checkFace._id);
+    const checkFace = await checkFaceModel.findOne({ reportMissingPersonId: _id });
+    if (checkFace) {
+      await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
+      await checkFaceModel.findByIdAndDelete(checkFace._id);
     }
     return res.json({
       success: true,
@@ -477,15 +508,23 @@ export const getSingleFoundPerson = asyncHandler(async (req, res, next) => {
   return res.json({ success: true, result: reportFoundPerson });
 });
 export const getAllMatching = asyncHandler(async (req, res, next) => {
-  const users = await checkFaceModel.find({}) .populate({
+  const users = await checkFaceModel.find({}).populate({
     path: 'userId',
-    select: 'userName email _id',
-  }) .populate({
+    select: 'userName email phone _id',
+  }).populate({
     path: 'reportMissingPersonId',
     select: 'fullName images age  phone _id',
+    populate: { // Nested populate 
+      path: 'userId',
+      select: 'userName email phone _id'
+    }
   }).populate({
     path: 'volunteerId',
     select: ' fullName images age phone _id',
+    populate: { // Nested populate 
+      path: 'userId',
+      select: 'userName email phone _id'
+    }
   });
-  return res.json({success:true , results : users});
- });
+  return res.json({ success: true, results: users });
+});

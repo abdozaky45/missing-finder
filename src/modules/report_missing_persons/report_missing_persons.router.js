@@ -27,6 +27,7 @@ router.post(
   report_missing_personsController.checkFaceMissingPerson
 );
 router.delete("/deleteReport/:_id", report_missing_personsController.deleteReport);
+router.delete("/deleteReport/matching/:_id", report_missing_personsController.deleteReportMatching);
 router.get(
   '/getAllMissingPersons',
   validation(validator.searchMissingAndFoundPersonsValidation),
@@ -77,5 +78,5 @@ router.get(
   validation(validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchFoundPersonsWithMissingSince
 );
-router.get("/matching/users",report_missing_personsController.getAllMatching);
+router.get("/matching/users", report_missing_personsController.getAllMatching);
 export default router;
