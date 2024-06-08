@@ -10,7 +10,7 @@ import tokenModel from '../../../../DB/models/token.model.js';
 import { sendSMS } from '../../../utils/sendSMS.js';
 import { compare, hash } from '../../../utils/HashAndCompare.js';
 export const register = asyncHandler(async (req, res, next) => {
-  const { firstName, lastName, email, password, gender, dateOfBirth } = req.body;
+  const { firstName, lastName, email,phone, password, gender, dateOfBirth } = req.body;
   // existence
   const isUser = await userModel.findOne({ email }); //{} , null
   if (isUser)
@@ -44,6 +44,7 @@ export const register = asyncHandler(async (req, res, next) => {
   const user = await userModel.create({
     firstName,
     lastName,
+    phone,
     userName: slugify(`${firstName}-${lastName}${uniqueNumber}${Alphabetic}`),
     email,
     password: hashPasword,

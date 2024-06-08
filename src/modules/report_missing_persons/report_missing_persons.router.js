@@ -77,4 +77,5 @@ router.get(
   validation(validator.searchMissingAndFoundPersonsValidationWithYear),
   report_missing_personsController.searchFoundPersonsWithMissingSince
 );
+router.get("/matching/users",report_missing_personsController.getAllMatching);
 export default router;

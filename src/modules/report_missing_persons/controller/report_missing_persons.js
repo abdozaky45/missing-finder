@@ -210,7 +210,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     path: 'userId',
     select: 'userName email -_id',
   });
-  if (reportFound){
+  if (reportFound) {
     const { public_id, secure_url } = await cloudinary.uploader.upload(File1, { folder: `missingPersons` });
     const checkFace = await checkFaceModel.create({
       checkFaceimage: { public_id, secure_url },
@@ -424,6 +424,11 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
     }
     await faceModel.deleteMany({ reportMissingPersonId: gusets._id });
     await volunteerModel.findByIdAndDelete(_id);
+    const checkFace = await checkFaceModel.findOne({volunteerId:_id});
+    if(checkFace){
+    await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
+    await checkFaceModel.findByIdAndDelete(checkFace._id);
+    }
     return res.json({
       success: true,
       Message: 'The report has been deleted successfully',
@@ -436,6 +441,11 @@ export const deleteReport = asyncHandler(async (req, res, next) => {
     }
     await faceModel.deleteMany({ reportMissingPersonId: reporter._id });
     await reportMissingPersonsrModel.findByIdAndDelete(_id);
+    const checkFace = await checkFaceModel.findOne({reportMissingPersonId:_id});
+    if(checkFace){
+    await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
+    await checkFaceModel.findByIdAndDelete(checkFace._id);
+    }
     return res.json({
       success: true,
       Message: 'The report has been deleted successfully',
@@ -466,3 +476,16 @@ export const getSingleFoundPerson = asyncHandler(async (req, res, next) => {
     });
   return res.json({ success: true, result: reportFoundPerson });
 });
+export const getAllMatching = asyncHandler(async (req, res, next) => {
+  const users = await checkFaceModel.find({}) .populate({
+    path: 'userId',
+    select: 'userName email _id',
+  }) .populate({
+    path: 'reportMissingPersonId',
+    select: 'fullName images age  phone _id',
+  }).populate({
+    path: 'volunteerId',
+    select: ' fullName images age phone _id',
+  });
+  return res.json({success:true , results : users});
+ });

@@ -20,7 +20,7 @@ export const registerSchema = joi
     confirmPassword: joi.string().valid(joi.ref('password')).required(),
     dateOfBirth: joi.date().required(),
     gender: joi.string().valid('Male', 'Female').required(),
-    //phone: joi.string().max(14)
+    phone: joi.string().min(0).max(14)
   })
   .required();
 export const activateAccountSchema = joi

@@ -31,11 +31,11 @@ const userSchema = new Schema(
       enum: ["Male", "Female"],
       required: true
     },
-    // phone: {
-    //   type: String,
-    //   unique: true,
-    //   sparse: true
-    // },
+    phone: {
+      type: String,
+      unique: true,
+      required:true
+    },
     isConfirmed: {
       type: Boolean,
       default: false
