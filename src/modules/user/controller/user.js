@@ -10,6 +10,7 @@ import { volunteerModel } from "../../../../DB/models/volunteer.model.js";
 import { reportMissingPersonsrModel } from "../../../../DB/models/report_missing_persons.model.js";
 import { compare, hash } from "../../../utils/HashAndCompare.js";
 import cloudinary from "../../../utils/cloudinary.js";
+import { checkFaceModel } from "../../../../DB/models/check_face.model.js";
 export const users = asyncHandler(async (req, res, next) => {
   const user = await userModel
     .find({})
@@ -82,6 +83,11 @@ export const deleteAccount = asyncHandler(async (req, res, next) => {
     const codeCreationTime = codeDocument.createdCodeDeleteAccount;
     const timeDifference = currentTime - codeCreationTime;
     if (timeDifference <= validityDuration) {
+      const checkFace = checkFaceModel.findOne({ userId: codeDocument._id })
+      if (checkFace) {
+        await cloudinary.uploader.destroy(checkFace.checkFaceimage.public_id);
+        await checkFaceModel.findByIdAndDelete(checkFace._id)
+      }
       const gusets = await volunteerModel.findOne({ userId: codeDocument._id });
       // volunteer
       if (gusets) {
