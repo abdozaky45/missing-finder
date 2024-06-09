@@ -15,6 +15,9 @@ export const register = asyncHandler(async (req, res, next) => {
   const isUser = await userModel.findOne({ email }); //{} , null
   if (isUser)
     return next(new Error('email already registered!', { cause: 408 }));
+  const isUserPhone = await userModel.findOne({ phone }); //{} , null
+  if (isUserPhone)
+    return next(new Error('please Enter anoyher phone!', { cause: 408 }));
   // uploud photo
   // if (!req.file)
   //   return next(new Error("personalIdCard is required", { cause: 400 }));
