@@ -227,7 +227,7 @@ export const login = asyncHandler(async (req, res, next) => {
   const token = jwk.sign(
     { id: user._id, userName: user.userName, email: user.email },
     process.env.TOKEN_SIGNATURE,
-    { expiresIn: '2d' }
+    { expiresIn: '365d' }
   );
   await tokenModel.create({
     token,

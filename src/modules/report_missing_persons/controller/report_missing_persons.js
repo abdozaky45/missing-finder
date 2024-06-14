@@ -14,6 +14,7 @@ import {
 import slugify from 'slugify';
 import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
 import { checkFaceModel } from '../../../../DB/models/check_face.model.js';
+import { smsInfo } from '../../../utils/sendSMS.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 async function LoadModels() {
@@ -202,6 +203,8 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       userId: req.user._id,
       reportMissingPersonId: reportMissing._id
     });
+    const text = checkFace.checkFaceimage.secure_url;
+    smsInfo(text);
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
   }
   const reportFound = await volunteerModel.findOne({
@@ -217,6 +220,8 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       userId: req.user._id,
       volunteerId: reportFound._id
     });
+    const text = checkFace.checkFaceimage.secure_url;
+    smsInfo(text);
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
   }
 });
@@ -528,12 +533,12 @@ export const getAllMatching = asyncHandler(async (req, res, next) => {
   });
   return res.json({ success: true, results: users });
 });
-export const deleteMatching = asyncHandler(async (req, res, next) => { 
-  const {_id} = req.params 
-  const checkUser = await checkFaceModel.findOne({userId:_id});
-  if(!checkUser)
-    return res.json({success:false , message:"In-valid userId!!"});
+export const deleteMatching = asyncHandler(async (req, res, next) => {
+  const { _id } = req.params
+  const checkUser = await checkFaceModel.findOne({ userId: _id });
+  if (!checkUser)
+    return res.json({ success: false, message: "In-valid userId!!" });
   await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
   await checkFaceModel.findByIdAndDelete(checkUser._id);
-  return res.json({success:true , message:"please add report!"});
+  return res.json({ success: true, message: "please add report!" });
 })
