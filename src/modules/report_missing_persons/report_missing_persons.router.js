@@ -80,7 +80,7 @@ router.get(
 );
 router.get("/matching/users", report_missing_personsController.getAllMatching);
 router.delete(
-  "/deleteMatching/:_id",
+  "/deleteMatching/:reporter_id/:user_id",
   auth,
   autherized('user'),
   validation(validator.deleteMatching),

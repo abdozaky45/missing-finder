@@ -534,11 +534,24 @@ export const getAllMatching = asyncHandler(async (req, res, next) => {
   return res.json({ success: true, results: users });
 });
 export const deleteMatching = asyncHandler(async (req, res, next) => {
-  const { _id } = req.params
-  const checkUser = await checkFaceModel.findOne({ userId: _id });
+  const { reporter_id, user_id } = req.params
+  const checkUser = await checkFaceModel.findOne({ userId: user_id });
   if (!checkUser)
     return res.json({ success: false, message: "In-valid userId!!" });
-  await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
-  await checkFaceModel.findByIdAndDelete(checkUser._id);
-  return res.json({ success: true, message: "please add report!" });
-})
+  const checkReporter = await checkFaceModel.findOne({ reportMissingPersonId: reporter_id });
+  if (checkReporter) {
+    await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
+    await checkFaceModel.findByIdAndDelete(checkUser._id);
+    return res.json({ success: true, message: "please add report!" });
+  }
+  if (!checkReporter)
+    return res.json({ success: false, message: "In-valid Reporter_id!!" });
+  const checkVolunteer = await checkFaceModel.findOne({ volunteerId: reporter_id });
+  if (checkVolunteer) {
+    await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
+    await checkFaceModel.findByIdAndDelete(checkUser._id);
+    return res.json({ success: true, message: "please add report!" });
+  }
+  if (!checkVolunteer)
+    return res.json({ success: false, message: "In-valid volunteerId!!" });
+});
