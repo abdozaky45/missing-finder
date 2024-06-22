@@ -86,4 +86,7 @@ router.delete(
   validation(validator.deleteMatching),
   report_missing_personsController.deleteMatching
 );
+router.get("/singleMatching/:userId",
+   validation(validator.singleMatching),
+    report_missing_personsController.getSingleMatching)
 export default router;

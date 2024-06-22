@@ -201,10 +201,11 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     const checkFace = await checkFaceModel.create({
       checkFaceimage: { public_id, secure_url },
       userId: req.user._id,
-      reportMissingPersonId: reportMissing._id
+      reportMissingPersonId: reportMissing._id,
+      user: reportMissing.userId
     });
-    const text = checkFace.checkFaceimage.secure_url;
-    smsInfo(text);
+    // const text = checkFace.checkFaceimage.secure_url;
+    // smsInfo(text);
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
   }
   const reportFound = await volunteerModel.findOne({
@@ -218,10 +219,11 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     const checkFace = await checkFaceModel.create({
       checkFaceimage: { public_id, secure_url },
       userId: req.user._id,
-      volunteerId: reportFound._id
+      volunteerId: reportFound._id,
+      user: reportFound.userId
     });
-    const text = checkFace.checkFaceimage.secure_url;
-    smsInfo(text);
+    // const text = checkFace.checkFaceimage.secure_url;
+    // smsInfo(text);
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
   }
 });
@@ -532,6 +534,16 @@ export const getAllMatching = asyncHandler(async (req, res, next) => {
     }
   });
   return res.json({ success: true, results: users });
+});
+export const getSingleMatching = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+  const faces = await checkFaceModel.find({ userId }).populate({
+    path: 'userId',
+    select: 'userName email phone _id',
+  });
+  if (!faces)
+    return next(new Error("In-valid user_Id", { cause: 400 }));
+  return res.json({ message: "Matching Data", results: faces })
 });
 export const deleteMatching = asyncHandler(async (req, res, next) => {
   const { reporter_id, user_id } = req.params

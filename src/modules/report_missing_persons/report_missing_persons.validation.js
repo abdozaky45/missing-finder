@@ -89,5 +89,7 @@ export const getSingleMissingPersonAndFoundPerson = joi.object({
 export const deleteMatching = joi.object({
   user_id: joi.string().required(),
   reporter_id: joi.string().required(),
-
+}).required();
+export const singleMatching = joi.object({
+  userId: joi.string().required(),
 }).required();

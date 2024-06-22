@@ -3,6 +3,7 @@ const checkFaceSchema = new Schema({
     userId: { type: Types.ObjectId, ref: "User", required: true },
     reportMissingPersonId: { type: Types.ObjectId, ref: 'Finder' },
     volunteerId: { type: Types.ObjectId, ref: 'Guset' },
+    user:{ type: Types.ObjectId, ref: "User", required: true },
     checkFaceimage: {
         secure_url: { type: String, required: true },
         public_id: { type: String, required: true }
