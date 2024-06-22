@@ -537,7 +537,7 @@ export const getAllMatching = asyncHandler(async (req, res, next) => {
 });
 export const getSingleMatching = asyncHandler(async (req, res, next) => {
   const { userId } = req.params;
-  const faces = await checkFaceModel.find({ userId }).populate({
+  const faces = await checkFaceModel.find({ user:userId }).populate({
     path: 'userId',
     select: 'userName email phone _id',
   });
