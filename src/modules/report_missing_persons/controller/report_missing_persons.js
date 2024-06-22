@@ -202,7 +202,6 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       checkFaceimage: { public_id, secure_url },
       userId: req.user._id,
       reportMissingPersonId: reportMissing._id,
-      user: reportMissing.userId
     });
     // const text = checkFace.checkFaceimage.secure_url;
     // smsInfo(text);
@@ -220,7 +219,6 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       checkFaceimage: { public_id, secure_url },
       userId: req.user._id,
       volunteerId: reportFound._id,
-      user: reportFound.userId
     });
     // const text = checkFace.checkFaceimage.secure_url;
     // smsInfo(text);
