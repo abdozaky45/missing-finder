@@ -15,6 +15,8 @@ import slugify from 'slugify';
 import { volunteerModel } from '../../../../DB/models/volunteer.model.js';
 import { checkFaceModel } from '../../../../DB/models/check_face.model.js';
 import { smsInfo } from '../../../utils/sendSMS.js';
+import { checkFaceTemp } from '../../../utils/html.js';
+import sendEmail from '../../../utils/sendEmail.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 async function LoadModels() {
@@ -204,8 +206,11 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       reportMissingPersonId: reportMissing._id,
       userData: reportMissing.userId._id
     });
-    // const text = checkFace.checkFaceimage.secure_url;
-    // smsInfo(text);
+    await sendEmail({
+      to: reportMissing.userId.email,
+      subject: 'Please activate your account!',
+      html: checkFaceTemp()
+    });
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
   }
   const reportFound = await volunteerModel.findOne({
@@ -222,8 +227,11 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
       volunteerId: reportFound._id,
       userData: reportFound.userId._id
     });
-    // const text = checkFace.checkFaceimage.secure_url;
-    // smsInfo(text);
+    await sendEmail({
+      to: reportFound.userId.email,
+      subject: 'Please activate your account!',
+      html: checkFaceTemp()
+    });
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
   }
 });
@@ -543,7 +551,7 @@ export const getMatchingWithUser = asyncHandler(async (req, res, next) => {
   });
   if (!faces || faces.length === 0)
     return next(new Error("In-valid user_Id", { cause: 400 }));
-  return res.json({ success: ture, message: "Matching Data", results: faces })
+  return res.json({ success:true, message: "Matching Data", results: faces })
 });
 export const deleteMatchingNotHimHer = asyncHandler(async (req, res, next) => {
   const { reporter_id, user_id } = req.params
