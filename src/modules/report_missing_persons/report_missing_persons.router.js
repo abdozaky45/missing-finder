@@ -84,9 +84,19 @@ router.delete(
   auth,
   autherized('user'),
   validation(validator.deleteMatching),
-  report_missing_personsController.deleteMatching
+  report_missing_personsController.deleteMatchingNotHimHer
 );
-router.get("/singleMatching/:userId",
-   validation(validator.singleMatching),
-    report_missing_personsController.getSingleMatching)
+router.get(
+  "/checkface/matchings/:userId",
+  validation(validator.singleMatching),
+  report_missing_personsController.getMatchingWithUser
+);
+router.delete(
+  "/checkFace/deleteMatching/:_id",
+  auth,
+  autherized('user'),
+  validation(validator.deleteCheckFace),
+  report_missing_personsController.deleteMatchingCheckFace
+);
 export default router;
+

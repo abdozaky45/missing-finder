@@ -93,3 +93,6 @@ export const deleteMatching = joi.object({
 export const singleMatching = joi.object({
   userId: joi.string().required(),
 }).required();
+export const deleteCheckFace = joi.object({
+  _id: joi.string().required(),
+}).required();
