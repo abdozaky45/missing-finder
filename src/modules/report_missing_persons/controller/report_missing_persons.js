@@ -208,7 +208,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     });
     await sendEmail({
       to: reportMissing.userId.email,
-      subject: 'Please activate your account!',
+      subject: 'check now!',
       html: checkFaceTemp()
     });
     return res.json({ success: true, result, keyRes: "missingPersons", missingData: reportMissing });
@@ -229,7 +229,7 @@ export const checkFaceMissingPerson = asyncHandler(async (req, res, next) => {
     });
     await sendEmail({
       to: reportFound.userId.email,
-      subject: 'Please activate your account!',
+      subject: 'check new!',
       html: checkFaceTemp()
     });
     return res.json({ success: true, result, keyRes: "foundPersons", foundData: reportFound });
