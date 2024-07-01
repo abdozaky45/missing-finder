@@ -551,14 +551,17 @@ export const getMatchingWithUser = asyncHandler(async (req, res, next) => {
   });
   if (!faces || faces.length === 0)
     return next(new Error("In-valid user_Id", { cause: 400 }));
-  return res.json({ success:true, message: "Matching Data", results: faces })
+  return res.json({ success: true, message: "Matching Data", results: faces })
 });
 export const deleteMatchingNotHimHer = asyncHandler(async (req, res, next) => {
   const { reporter_id, user_id } = req.params
-  const checkUser = await checkFaceModel.findOne({ userId: user_id });
+  const checkUser = await checkFaceModel.findOne({ userData: user_id });
   if (!checkUser)
     return res.json({ success: false, message: "In-valid userId!!" });
-  const checkReporter = await checkFaceModel.findOne({ reportMissingPersonId: reporter_id });
+  const checkReporter = await checkFaceModel.findOne({
+    $or: [{ reportMissingPersonId: reporter_id },
+    { volunteerId: reporter_id }]
+  });
   if (checkReporter) {
     await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
     await checkFaceModel.findByIdAndDelete(checkUser._id);
@@ -566,14 +569,6 @@ export const deleteMatchingNotHimHer = asyncHandler(async (req, res, next) => {
   }
   if (!checkReporter)
     return res.json({ success: false, message: "In-valid Reporter_id!!" });
-  const checkVolunteer = await checkFaceModel.findOne({ volunteerId: reporter_id });
-  if (checkVolunteer) {
-    await cloudinary.uploader.destroy(checkUser.checkFaceimage.public_id);
-    await checkFaceModel.findByIdAndDelete(checkUser._id);
-    return res.json({ success: true, message: "please add report!" });
-  }
-  if (!checkVolunteer)
-    return res.json({ success: false, message: "In-valid volunteerId!!" });
 });
 export const deleteMatchingCheckFace = asyncHandler(async (req, res, next) => {
   const checkUser = await checkFaceModel.findById(req.params._id);
